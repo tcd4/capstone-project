@@ -2,6 +2,13 @@
 #define __LOGGER__
 
 
+/**
+ * @file logger.h
+ * 
+ * @brief contains functions for logging
+ */
+
+
 #include <SDL.h>
 #include <glib/gprintf.h>
 
@@ -22,13 +29,13 @@ typedef enum
 
 
 /**< flag to check for if the logger is initialized */
-#define LOGGER_INIT 1
+#define LOGGER_INIT	1
 
 /**< flag to check for if the logger is threaded */
-#define LOGGER_THREADED 2
+#define LOGGER_THREADED	2
 
 /**< flag to check for if the logger is finished */
-#define LOGGER_DONE 4
+#define LOGGER_DONE	4
 
 /**
  * @brief initializes the logger
