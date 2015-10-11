@@ -16,7 +16,7 @@ OBJS = $(patsubst %.c,%.o,$(wildcard *.c))
 # Project Info
 #
 
-PROJ = xcom
+PROJ = capstone
 
 
 #
@@ -36,7 +36,7 @@ GLIB_CFLAGS = `pkg-config --cflags glib-2.0`
 GLIB_LDFLAGS = `pkg-config --libs glib-2.0`
 
 SDL_CFLAGS = `sdl2-config --cflags`
-SDL_LDFLAGS = `sdl2-config --libs` -lm -lSDL2_image -lpng -ljpeg -lz -lGL -lGLEW -lGLU -lyaml
+SDL_LDFLAGS = `sdl2-config --libs` -lm -lSDL2_image -lpng -ljpeg -lz -lyaml
 
 LFLAGS = -g -o $(PROJ)
 CFLAGS = -g $(INC_PARAMS) -Wall -pedantic -std=gnu99 -fgnu89-inline -Wno-unknown-pragmas -Wno-variadic-macros

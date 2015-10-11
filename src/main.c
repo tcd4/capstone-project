@@ -1,5 +1,7 @@
 #include <stdlib.h>
 
+#include "logger.h"
+
 
 uint8 game_over = 0;
 
@@ -22,6 +24,7 @@ int main( int argc, const char *argv[] )
 
 void Init_Systems()
 {
+  Init_Logger( "logs.txt", 1 );
 }
 
 
@@ -32,4 +35,5 @@ void Loop()
 
 void Exit_Systems()
 {
+  Exit_Logging();
 }

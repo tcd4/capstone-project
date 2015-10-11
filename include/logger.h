@@ -3,7 +3,6 @@
 
 
 #include <SDL.h>
-#include <gasyncqueue.h>
 #include <glib/gprintf.h>
 
 #include "types.h"
@@ -50,10 +49,14 @@ uint8	Logger_Is_Init();
 void	Enable_Threaded_Logger();
 
 /**
+ * @brief checks if the logger is multi-threaded
+ */
+uint8	Logger_Is_Threaded();
+
+/**
  * @brief if the logger is using threading, stop the thread
  */
 void	Exit_Logging();
-
 
 /**
  * @brief logs a message to the log file
@@ -64,6 +67,15 @@ void	Exit_Logging();
  */
 #define Log( lvl, ... )		Log_Msg( __FILE__, __LINE__, lvl, __VA_ARGS__ )
 void Log_Msg( char *file, int line, Log_Level lvl, char *msg, ... );
+
+/**
+ * @brief converts a Log_Level to a string
+ * 
+ * @param lev	the log level to convert
+ *
+ * @return a string representation of a Log_Level
+ */
+char* Log_Level_To_Str( Log_Level lev );
 
 
 #endif

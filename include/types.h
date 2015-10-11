@@ -9,6 +9,9 @@
  */
 
 
+#include <glib.h>
+
+
 /* unsigned sized int defines */
 
 typedef unsigned char uint8;             /**< unsigned 8 bit integer  */
