@@ -6,6 +6,7 @@
 #include <yaml.h>
 
 #include "dict.h"
+#include "str_conversions.h"
 
 
 /**
