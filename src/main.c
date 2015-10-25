@@ -3,19 +3,23 @@
 #include "logger.h"
 #include "parser.h"
 #include "graphics2d.h"
+#include "cmds.h"
 
 
 #define SYS_CONFIG	"../cfg/sys_config.def"
 
 
-uint8 		game_over = 0;
+static uint8 	_game_over = 0;
 static Dict	*_sys_config = NULL;
 
 
 static void	Init_Systems();
 static void	Start_SDL();
+static void	Start_Commands();
 static void	Exit_Systems();
 static void	Loop();
+
+void	game_over_func( dataptr data );
 
 
 int main( int argc, const char *argv[] )
@@ -38,7 +42,10 @@ void Init_Systems()
   
   Init_Logger( Find_In_Dict( _sys_config, "log_file" ), 0 );
   Start_SDL();
+  Start_Commands();
   Init_2DGraphics( _sys_config );
+  
+  Log( INFO, "All systems initialized." );
 }
 
 
@@ -69,14 +76,50 @@ void Start_SDL()
 }
 
 
+void Start_Commands()
+{
+  init_cmd_system();
+  if( !add_cmd( TRUE, "game_over", SDLK_ESCAPE, 0, game_over_func, NULL ) )
+  {
+    Log( FATAL, "game_over command wasn't added" );
+    exit( -1 );
+  }
+}
+
+
 void Loop()
 {
+  SDL_Event event;
+  
+  while( !_game_over )
+  {
+    while( SDL_PollEvent( &event ) )
+    {
+      if( event.type == SDL_QUIT )
+      {
+	_game_over = 1;
+      }
+      else if( event.type == SDL_KEYDOWN )
+      {
+	check_cmds( &event );
+      }
+    }
+  }
+}
+
+
+void game_over_func( dataptr data )
+{
+  _game_over = 1;
 }
 
 
 void Exit_Systems()
 {
   Log( INFO, "Shutting Down Systems!" );
+  close_cmd_system();
+  /* close graphics */
+  /* close audio */
   SDL_Quit();
   Exit_Logging();
 }
