@@ -66,7 +66,7 @@
 /* vector types */
 
 /*< 1d vector type */
-typedef float vec_t;
+typedef double vec_t;
 
 /*< 2d vector type */
 typedef vec_t vec2_t[ 2 ];
