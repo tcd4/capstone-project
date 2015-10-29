@@ -171,42 +171,4 @@ void check_cmd( SDL_Event *event, Cmd *cmd )
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* eof */
