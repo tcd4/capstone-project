@@ -379,4 +379,21 @@ float Get_Angle_Rad( float x, float y );
 void Cross_Product( vec3_t *out, vec3_t v1, vec3_t v2 );
 
 
+/* shapes */
+typedef struct
+{
+  int		x;	/** the x coordintate */
+  int		y;	/** the y coordintate */
+  uint32	w;	/** the width */
+  uint32	h;	/** the height */
+}Rect;
+
+typedef struct
+{
+  int		x;	/** the x coordintate */
+  int		y;	/** the y coordintate */
+  uint32	r;	/** the radius */
+}Circ;
+
+
 #endif
