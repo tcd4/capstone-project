@@ -103,6 +103,8 @@ void Loop()
       {
 	check_cmds( &event );
       }
+      
+      Next_Frame();
     }
   }
 }

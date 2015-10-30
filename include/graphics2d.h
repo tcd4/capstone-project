@@ -36,6 +36,13 @@ void Next_Frame();
 SDL_Surface* Get_Screen();
 
 /**
+ * @brief gets a pointer to the game renderer
+ * 
+ * @return a pointer to the game renderer or NULL on error
+ */
+SDL_Renderer* Get_Renderer();
+
+/**
  * @brief gets the time the game has been running
  * 
  * @return the amount of the time the game has been running
@@ -54,7 +61,7 @@ uint32 Get_Frame();
  * 
  * @return the resolution of the main window
  */
-uint32* Get_Resolution();
+vec2_t* Get_Resolution();
 
 
 #endif

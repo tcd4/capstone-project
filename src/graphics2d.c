@@ -12,7 +12,7 @@ static vec2_t		_resolution;		/**< the resolution of the screen */
 static vec2_t		_render_resolution;	/**< the renderer's resolution */
 static SDL_Window	*_main_window = NULL;	/**< the main window */
 static SDL_Renderer	*_renderer = NULL;	/**< the graphics renderer */
-static SDL_Texture	*_texture = NULL;	/**< the screen texture */
+/*static SDL_Texture	*_texture = NULL;	*//**< the screen texture */
 static SDL_Surface	*_surface = NULL;	/**< the screen surface */
 
 static uint32	_bpp;		/**< the bits-per-pixel */
@@ -99,9 +99,47 @@ void Init_2DGraphics( Dict *config )
 }
 
 
+void Next_Frame()
+{  
+  SDL_RenderPresent( _renderer );
+  
+  /* delay the frame */
+  _previous_time = _current_time;
+  _current_time = SDL_GetTicks();
+  _delay_diff = _current_time - _previous_time;
+  
+  if( _delay_diff < _frame_delay )
+    SDL_Delay( _frame_delay - _delay_diff );
+}
+
+
+SDL_Surface* Get_Screen()
+{
+  return _surface;
+}
+
+
+SDL_Renderer* Get_Renderer()
+{
+  return _renderer;
+}
+
+
 uint32 Get_Time()
 {
   return _current_time;
+}
+
+
+uint32 Get_Frame()
+{
+  return _current_frame;
+}
+
+
+vec2_t* Get_Resolution()
+{
+  return &_resolution;
 }
 
 
