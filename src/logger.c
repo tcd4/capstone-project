@@ -127,7 +127,7 @@ void	Log_Msg( char *file, int line, Log_Level lvl, char *msg, ... )
   va_end( ap );
   
   l = Log_Level_To_Str( lvl );
-  m = g_strdup_printf( "%s:%i:%s --- %s", file, line, l, b );
+  m = g_strdup_printf( "%s:%i --- %s --- %s", file, line, l, b );
   
   if( Logger_Is_Threaded() )
     g_async_queue_push( _log_queue, m );

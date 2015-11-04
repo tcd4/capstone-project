@@ -245,4 +245,13 @@ void Vec4_Set_Angle_Rads( vec4_t *v, float a )
 }
 
 
+void set_rect( SDL_Rect *r, double x, double y, double w, double h )
+{
+  r->x = x;
+  r->y = y;
+  r->w = w;
+  r->h = h;
+}
+
+
 /*eof*/

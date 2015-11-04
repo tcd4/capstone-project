@@ -1,0 +1,6 @@
+image_file: ../assets/sprites/test.png
+columns: 8
+rows: 3
+frames: 24
+dynamic: 0
+

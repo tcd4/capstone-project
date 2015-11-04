@@ -4,6 +4,8 @@
 #include "parser.h"
 #include "graphics2d.h"
 #include "cmds.h"
+#include "sprite.h"
+#include "entity.h"
 
 
 #define SYS_CONFIG	"../cfg/sys_config.def"
@@ -44,6 +46,8 @@ void Init_Systems()
   Start_SDL();
   Start_Commands();
   Init_2DGraphics( _sys_config );
+  init_sprite_system();
+  init_entity_system();
   
   Log( INFO, "All systems initialized." );
 }
@@ -90,6 +94,13 @@ void Start_Commands()
 void Loop()
 {
   SDL_Event event;
+  Sprite *test;
+  vec2_t p, s;
+  
+  Vec2_Set( p, 20, 20 );
+  Vec2_Clear( s );
+  
+  test = load_sprite_from_config( "../cfg/test_sprite.def" );
   
   while( !_game_over )
   {
@@ -103,6 +114,11 @@ void Loop()
       {
 	check_cmds( &event );
       }
+      
+      update_all_entities();
+      draw_all_entities();
+      
+      draw_sprite( test, p, s, s, 0 );
       
       Next_Frame();
     }
@@ -120,7 +136,9 @@ void Exit_Systems()
 {
   Log( INFO, "Shutting Down Systems!" );
   close_cmd_system();
-  /* close graphics */
+  close_sprite_system();
+  close_entity_system();
+  Close_2DGraphics();
   /* close audio */
   SDL_Quit();
   Exit_Logging();

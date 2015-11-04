@@ -23,6 +23,11 @@
  */
 void Init_2DGraphics( Dict *config );
 
+/** 
+ * @brief closes the graphics system
+ */
+void Close_2DGraphics();
+
 /**
  * @brief renders the contents currently in the screen buffer
  */

@@ -46,10 +46,11 @@ typedef const void*	constdataptr;	/**< constant void pointer data type */
 
 /* function pointer defines */
 
-typedef void	( *FreeNotify )( dataptr *data );		/**< free function pointer */
-typedef dataptr	( *CloneNotify )( dataptr data );		/**< duplicate function pointer */
-typedef uint8	( *CompareNotify )( dataptr d1, dataptr d2 );	/**< compare function pointer */
-typedef void	( *EventNotify )( dataptr data );		/**< event function pointer */
+typedef dataptr ( *LoadNotify )( char *filename, dataptr data );	/**< load function pointer */
+typedef void	( *FreeNotify )( dataptr data );			/**< free function pointer */
+typedef dataptr	( *CloneNotify )( dataptr data );			/**< duplicate function pointer */
+typedef uint8	( *CompareNotify )( dataptr d1, dataptr d2 );		/**< compare function pointer */
+typedef void	( *EventNotify )( dataptr data );			/**< event function pointer */
 
 
 #endif

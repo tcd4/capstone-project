@@ -3,6 +3,7 @@
 
 
 #include <math.h>
+#include <SDL.h>
 
 #include "types.h"
 
@@ -380,13 +381,18 @@ void Cross_Product( vec3_t *out, vec3_t v1, vec3_t v2 );
 
 
 /* shapes */
+
+/* rectangles */
+
 typedef struct
 {
-  int		x;	/** the x coordintate */
-  int		y;	/** the y coordintate */
-  uint32	w;	/** the width */
-  uint32	h;	/** the height */
+  double x,y,w,h;
 }Rect;
+
+void set_rect( SDL_Rect *r, double x, double y, double w, double h );
+
+
+/* circles */
 
 typedef struct
 {

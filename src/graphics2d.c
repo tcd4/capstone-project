@@ -30,6 +30,12 @@ void Init_2DGraphics( Dict *config )
   int flags = 0;
   int tmp = 0;
   
+  if( !config )
+  {
+    Log( FATAL, "No config to initialize graphics system" );
+    exit( -1 );
+  }
+  
   Log( INFO, "Initializing Graphics" );
   
   Vec2_Clear( _resolution );
@@ -142,5 +148,10 @@ vec2_t* Get_Resolution()
   return &_resolution;
 }
 
+
+void Close_2DGraphics()
+{
+  
+}
 
 /*eof*/
