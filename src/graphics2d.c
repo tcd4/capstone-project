@@ -12,7 +12,7 @@ static vec2_t		_resolution;		/**< the resolution of the screen */
 static vec2_t		_render_resolution;	/**< the renderer's resolution */
 static SDL_Window	*_main_window = NULL;	/**< the main window */
 static SDL_Renderer	*_renderer = NULL;	/**< the graphics renderer */
-/*static SDL_Texture	*_texture = NULL;	*//**< the screen texture */
+static SDL_Texture	*_texture = NULL;	/**< the screen texture */
 static SDL_Surface	*_surface = NULL;	/**< the screen surface */
 
 static uint32	_bpp;		/**< the bits-per-pixel */
@@ -42,10 +42,15 @@ void Init_2DGraphics( Dict *config )
   Vec2_Clear( _render_resolution );
   Vec4_Clear( _background_color_v );
   Vec4_Set( _background_color_v, 255, 255, 255, 255 );
+  Vec2_Set( _resolution, 1920, 1080 );
+  Vec2_Set( _render_resolution, 1920, 1080 );
   
   /* set config stuff */
+  /*
   Str_As_Vec2( Find_In_Dict( config, "resolution" ), &_resolution );
   Str_As_Vec2( Find_In_Dict( config, "render_resolution" ), &_render_resolution );
+  */
+  
   Str_As_UInt( Find_In_Dict( config, "bpp" ), &_bpp );
   Str_As_UInt( Find_In_Dict( config, "frame_delay" ), &_frame_delay );
   /*
@@ -77,20 +82,20 @@ void Init_2DGraphics( Dict *config )
   SDL_RenderPresent( _renderer );
   SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "linear" );
   SDL_RenderSetLogicalSize( _renderer, _render_resolution[ 0 ], _render_resolution[ 1 ] );
-  /*
-  _texture = SDL_CreateTexture( _renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, _render_resolution[ 0 ], _render_resolution[ 1 ] );
-  if( !_texture )
-  {
-    Log( FATAL, "Failed to Create the Screen Texture" );
-    exit( -1 );
-  }
-  */
-  SDL_PixelFormatEnumToMasks( SDL_PIXELFORMAT_ARGB8888, ( int* )&_bpp, &_rmask, &_gmask, &_bmask, &_amask );
+  
+  SDL_PixelFormatEnumToMasks( SDL_PIXELFORMAT_RGBA8888, ( int* )&_bpp, &_rmask, &_gmask, &_bmask, &_amask );
   
   _surface = SDL_CreateRGBSurface( 0, _render_resolution[ 0 ], _render_resolution[ 1 ], _bpp, _rmask, _gmask, _bmask, _amask );
   if( !_surface )
   {
     Log( FATAL, "Failed to Create the Screen Surface" );
+    exit( -1 );
+  }
+  
+  _texture = SDL_CreateTexture( _renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, _render_resolution[ 0 ], _render_resolution[ 1 ] );
+  if( !_texture )
+  {
+    Log( FATAL, "Failed to Create the Screen Texture due to: %s", SDL_GetError() );
     exit( -1 );
   }
   

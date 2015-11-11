@@ -51,6 +51,6 @@ typedef void	( *FreeNotify )( dataptr data );			/**< free function pointer */
 typedef dataptr	( *CloneNotify )( dataptr data );			/**< duplicate function pointer */
 typedef uint8	( *CompareNotify )( dataptr d1, dataptr d2 );		/**< compare function pointer */
 typedef void	( *EventNotify )( dataptr data );			/**< event function pointer */
-
+typedef void	( *CollisionNotify )( dataptr self, dataptr other );	/**< collision event funciton pointer */
 
 #endif

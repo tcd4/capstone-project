@@ -3,6 +3,7 @@
 
 static Entity	_ent_list[ MAX_ENTITIES ];
 static uint32	_num_ents = 0;
+static Space	*_ent_space = NULL;
 
 
 void init_entity_system()
@@ -10,6 +11,13 @@ void init_entity_system()
   Log( INFO, "Initializing Entity System" );
   
   memset( _ent_list, 0, sizeof( Entity ) * MAX_ENTITIES );
+  
+  _ent_space = create_space( PHYSICS_STEPS );
+  if( !_ent_space )
+  {
+    Log( FATAL, "No space to play games." );
+    exit ( -1 );
+  }
   
   Log( INFO, "Entity System Initialized" );
 }
@@ -85,6 +93,7 @@ void free_all_entities()
 
 void update_entity( Entity *ent )
 {
+  if( !ent || !ent->inuse ) return;
 }
 
 
@@ -103,8 +112,7 @@ void update_all_entities()
 
 void draw_entity( Entity *ent )
 {
-  if( !ent ) return;
-  if( !ent->visible ) return;
+  if( !ent || !ent->visible || !ent->inuse ) return;
   
   if( ent->Draw )
     ent->Draw( ent );

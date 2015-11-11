@@ -13,9 +13,10 @@
 
 
 #include "sprite.h"
-
+#include "physics.h"
 
 #define MAX_ENTITIES 128
+#define PHYSICS_STEPS 5
 
 
 enum
@@ -43,6 +44,7 @@ typedef struct entity_s
 	uint16			state;		/**< the state of the entity */
 	uint8			visible;	/**< determines if the entity is drawn or not */
 	
+	struct body_s		*body;
 	vec2_t			position;	/**< position of the entity */
 	vec2_t			origin;		/**< center of the entity */
 

@@ -1,6 +1,6 @@
-image_file: ../assets/sprites/test.png
+image_file: ../assets/sprites/Marisa.png
 columns: 8
-rows: 3
-frames: 24
+rows: 1
+frames: 8
 dynamic: 0
 
