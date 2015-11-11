@@ -48,8 +48,8 @@ typedef struct entity_s
 	vec2_t			position;	/**< position of the entity */
 	vec2_t			origin;		/**< center of the entity */
 
-	Uint32			thinkrate;	/**< determines how often the entity thinks */
-	Uint32			nextThink;	/**< determines when the entity will think next */
+	Uint32			think_rate;	/**< determines how often the entity thinks */
+	Uint32			next_think;	/**< determines when the entity will think next */
 
 	void			( *Draw )( struct entity_s *self );				/**< pointer to the entity's draw function */
 	void			( *Free )( struct entity_s *self );				/**< pointer to the entity's free function */

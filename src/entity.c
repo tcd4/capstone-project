@@ -101,6 +101,14 @@ void update_entity( Entity *ent )
   if( !ent || !ent->inuse ) return;
   
   Vec2_Copy( ent->body->position, ent->position );
+  
+  if( ent->next_think <= Get_Time() )
+  {
+    if( ent->Think )
+      ent->Think( ent );
+    
+    ent->next_think = Get_Time() + ent->think_rate;
+  }
 }
 
 
