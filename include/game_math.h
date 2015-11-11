@@ -382,6 +382,16 @@ void Cross_Product( vec3_t *out, vec3_t v1, vec3_t v2 );
 
 /* shapes */
 
+/**< the type of shapes that are supported */
+typedef enum
+{
+  NO_SHAPE = 0,
+  POINT = 1,
+  RECTANGLE = 2,
+  CIRCLE = 4,
+  CUSTOM = 7
+}Shape;
+
 /* rectangles */
 
 typedef struct

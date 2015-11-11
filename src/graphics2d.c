@@ -156,7 +156,33 @@ vec2_t* Get_Resolution()
 
 void Close_2DGraphics()
 {
+  Log( INFO, "Closing Graphics" );
   
+  if( _texture )
+  {
+    SDL_DestroyTexture( _texture );
+    _texture = NULL;
+  }
+  
+  if( _renderer )
+  {
+    SDL_DestroyRenderer( _renderer );
+    _renderer = NULL;
+  }
+  
+  if( _main_window )
+  {
+    SDL_DestroyWindow( _main_window );
+    _main_window = NULL;
+  }
+  
+  if( _surface )
+  {
+    SDL_FreeSurface( _surface );
+    _surface = NULL;
+  }
+  
+  Log( INFO, "Graphics Closed" );
 }
 
 /*eof*/

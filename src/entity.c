@@ -26,10 +26,12 @@ void init_entity_system()
 void close_entity_system()
 {
   Log( INFO, "Closing Entity System" );
-  
   free_all_entities();
-  
   Log( INFO, "Entity System Closed" );
+  
+  Log( INFO, "Destroying Space" );
+  free_space( &_ent_space );
+  Log( INFO, "Space Destroyed" );
 }
 
 
@@ -73,6 +75,9 @@ void free_entity( Entity *ent )
   if( ent->name )
     free( ent->name );
   
+  if( ent->body )
+    free_body( &ent->body );
+  
   if( ent->Free )
     ent->Free( ent );  
 
@@ -94,6 +99,8 @@ void free_all_entities()
 void update_entity( Entity *ent )
 {
   if( !ent || !ent->inuse ) return;
+  
+  Vec2_Copy( ent->body->position, ent->position );
 }
 
 
@@ -101,6 +108,8 @@ void update_all_entities()
 {
   int i, e;
 
+  do_steps( _ent_space );
+  
   e = 0;
   for( i = 0; i < MAX_ENTITIES && e <= _num_ents; i++ )
   {

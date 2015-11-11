@@ -87,7 +87,7 @@ Sprite* load_sprite( char *image_file, uint32 cols, uint32 rows, uint32 frames, 
   int i;
   Sprite *tmp;
   
-  Log( TRACE, "%s", image_file );
+  Log( TRACE, "Loading image %s", image_file );
   if( !image_file ) return NULL;
   
   /* check if the sprite is already loaded */

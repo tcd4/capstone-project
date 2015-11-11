@@ -13,16 +13,6 @@
 #define NO_GROUP 0
 #define ALL_GROUPS 1
 
-/**< the type of shapes that are supported */
-typedef enum
-{
-  NO_SHAPE = 0,
-  POINT = 1,
-  RECTANGLE = 2,
-  CIRCLE = 4,
-  CUSTOM = 7
-}Shape;
-
 
 /**< the bodies in 2d space */
 typedef struct body_s
@@ -30,12 +20,10 @@ typedef struct body_s
   struct entity_s	*owner;		/**< the entity whose body this is */
   uint32		group;		/**< the collision group the body belongs to */
   
-  Shape			shape_type;	/**< the shape of the body */
-  dataptr		shape;		/**< the struct for the shape */
-  
   vec2_t		position;	/**< the position of the body in space */
   vec2_t		velocity;	/**< the velocity of the body in space */
   vec2_t		acceleration;	/**< the acceleration of the body in space */
+  vec2_t		size;		/**< the width and height of the body */
   
   CollisionNotify	collide;	/**< the function to call when the body collides with another body */
 }Body;
@@ -59,7 +47,7 @@ typedef struct space_s Space;
  * 
  * @return a pointer to the newly created body or NULL on error
  */
-Body* create_body( struct entity_s *owner, uint32 group, Shape shape_type, dataptr shape, vec2_t position, vec2_t velocity, vec2_t acceleration, CollisionNotify collide );
+Body* create_body( struct entity_s *owner, uint32 group, vec2_t size, vec2_t position, vec2_t velocity, vec2_t acceleration, CollisionNotify collide );
 
 /**
  * @brief frees a body
@@ -77,6 +65,14 @@ void free_body( Body **body );
  * @return a pointer to the new space or NULL on error
  */
 Space* create_space( uint8 steps );
+
+/**
+ * @brief frees a space
+ * WARNING this will not free the bodies in the space
+ * 
+ * @param space	the space to free
+ */
+void free_space( Space **space );
 
 /**
  * @brief move bodies in the space and checks for collisions between them
