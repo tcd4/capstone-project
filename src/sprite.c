@@ -78,29 +78,38 @@ Sprite* load_sprite_from_config( char *file )
   Str_As_UInt( Find_In_Dict( config, "frames" ), &f );
   Str_As_UInt( Find_In_Dict( config, "dynamic" ), &d );
   
-  return load_sprite( Find_In_Dict( config, "image_file" ), c, r, f, d );      
+  return load_sprite( Find_In_Dict( config, "image_file" ), c, r, f, d, config );      
 }
 
 
-Sprite* load_sprite( char *image_file, uint32 cols, uint32 rows, uint32 frames, uint8 dynamic )
+Sprite* load_sprite( char *image_file, uint32 cols, uint32 rows, uint32 frames, uint8 dynamic, Dict* config )
 {
   int i;
   Sprite *tmp;
   
   Log( TRACE, "Loading image %s", image_file );
-  if( !image_file ) return NULL;
+  if( !image_file )
+  {
+    if( config )
+      Free_Dict( &config );
+    return NULL;
+  }
   
   /* check if the sprite is already loaded */
   tmp = _find_in_sprite_list( image_file );
   if( tmp )
   {
     tmp->ref_count++;
+    if( config )
+      Free_Dict( &config );
     return tmp;
   }
   
   if( _num_sprites + 1 >= MAX_SPRITES )
   {
     Log( WARN, "No more sprites can be made" );
+    if( config )
+      Free_Dict( &config );
     return NULL;
   }
   
@@ -112,6 +121,8 @@ Sprite* load_sprite( char *image_file, uint32 cols, uint32 rows, uint32 frames, 
       if( !_sprite_list[ i ].image )
       {
 	Log( ERROR, "Failed to load image" );
+	if( config )
+	  Free_Dict( &config );
 	return NULL;
       }
       
@@ -125,6 +136,8 @@ Sprite* load_sprite( char *image_file, uint32 cols, uint32 rows, uint32 frames, 
       {
 	Log( ERROR, "Failed to create image texture" );
 	SDL_FreeSurface( _sprite_list[ i ].image );
+	if( config )
+	  Free_Dict( &config );
 	return NULL;
       }
         
@@ -140,9 +153,15 @@ Sprite* load_sprite( char *image_file, uint32 cols, uint32 rows, uint32 frames, 
       
       _num_sprites++;
       
+      if( config )
+	Free_Dict( &config );
+      
       return &_sprite_list[ i ];
     }
   }
+  
+  if( config )
+    Free_Dict( &config );
   
   Log( WARN, "Sprite %s did not load.", image_file );
   return NULL;

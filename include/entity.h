@@ -12,8 +12,10 @@
  */
 
 
-#include "sprite.h"
 #include "physics.h"
+#include "logger.h"
+#include "graphics2d.h"
+
 
 #define MAX_ENTITIES 128
 #define PHYSICS_STEPS 5
@@ -30,6 +32,7 @@ enum
 };
 
 
+/**< the objects that interact with the game world */
 typedef struct entity_s
 {
 	int			inuse;		/**< determines if the entities is in use */
@@ -44,9 +47,11 @@ typedef struct entity_s
 	uint16			state;		/**< the state of the entity */
 	uint8			visible;	/**< determines if the entity is drawn or not */
 	
-	struct body_s		*body;
+	struct body_s		*body;		/**< the entity's body in space */
 	vec2_t			position;	/**< position of the entity */
 	vec2_t			origin;		/**< center of the entity */
+	vec2_t			scale;		/**< scale of the entity */
+	vec2_t			rotation;	/**< rotation of the entity */
 
 	Uint32			think_rate;	/**< determines how often the entity thinks */
 	Uint32			next_think;	/**< determines when the entity will think next */

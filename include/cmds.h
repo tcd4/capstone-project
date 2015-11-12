@@ -17,6 +17,7 @@
 #include "graphics2d.h"
 
 
+/**< input commands */
 typedef struct cmd_s
 {
   uint8		inuse;		/**< determines if the command is being used */

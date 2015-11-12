@@ -43,18 +43,17 @@ void Init_2DGraphics( Dict *config )
   Vec4_Clear( _background_color_v );
   Vec4_Set( _background_color_v, 255, 255, 255, 255 );
   Vec2_Set( _resolution, 1920, 1080 );
-  Vec2_Set( _render_resolution, 1920, 1080 );
+
   
   /* set config stuff */
-  /*
-  Str_As_Vec2( Find_In_Dict( config, "resolution" ), &_resolution );
-  Str_As_Vec2( Find_In_Dict( config, "render_resolution" ), &_render_resolution );
-  */
+  
+  Str_As_Vec2( Find_In_Dict( config, "resolution" ), _resolution );
+  Str_As_Vec2( Find_In_Dict( config, "render_resolution" ), _render_resolution );
   
   Str_As_UInt( Find_In_Dict( config, "bpp" ), &_bpp );
   Str_As_UInt( Find_In_Dict( config, "frame_delay" ), &_frame_delay );
   /*
-  Str_As_Vec4( Find_In_Dict( config, "background_color" ), &_background_color_v );
+  Str_As_Vec4( Find_In_Dict( config, "background_color" ), _background_color_v );
   */
   Str_As_Int( Find_In_Dict( config, "fullscreen" ), &tmp );
   if( tmp )

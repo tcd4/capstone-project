@@ -64,7 +64,7 @@ uint8 Str_As_Double( char *s, double *out );
  * 
  * @return 1 on success or 0 on failure
  */
-uint8 Str_As_Vec2( char *s, vec2_t *out );
+uint8 Str_As_Vec2( char *s, vec_t *out );
 
 /**
  * @brief converts a string to a vec3_t
@@ -74,7 +74,7 @@ uint8 Str_As_Vec2( char *s, vec2_t *out );
  * 
  * @return 1 on success or 0 on failure
  */
-uint8 Str_As_Vec3( char *s, vec3_t *out );
+uint8 Str_As_Vec3( char *s, vec_t *out );
 
 /**
  * @brief converts a string to a vec4_t
@@ -84,7 +84,7 @@ uint8 Str_As_Vec3( char *s, vec3_t *out );
  * 
  * @return 1 on success or 0 on failure
  */
-uint8 Str_As_Vec4( char *s, vec4_t *out );
+uint8 Str_As_Vec4( char *s, vec_t *out );
 
 
 #endif

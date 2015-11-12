@@ -49,7 +49,7 @@ uint8 Str_As_Double( char *s, double *out )
 }
 
 
-uint8 Str_As_Vec2( char *s, vec2_t *out )
+uint8 Str_As_Vec2( char *s, vec_t *out )
 {
   vec2_t tmp;
   
@@ -58,12 +58,12 @@ uint8 Str_As_Vec2( char *s, vec2_t *out )
   Vec2_Clear( tmp );
   
   if( sscanf( s, "%lf,%lf", &tmp[ 0 ], &tmp[ 1 ] ) != 2 ) return FALSE;
-  Vec2_Copy( tmp, *out );
+  Vec2_Copy( tmp, out );
   return TRUE;
 }
 
 
-uint8 Str_As_Vec3( char *s, vec3_t *out )
+uint8 Str_As_Vec3( char *s, vec_t *out )
 {
   vec3_t tmp;
   
@@ -72,12 +72,12 @@ uint8 Str_As_Vec3( char *s, vec3_t *out )
   Vec3_Clear( tmp );
   
   if( sscanf( s, "%lf,%lf,%lf", &tmp[ 0 ], &tmp[ 1 ], &tmp[ 2 ] ) != 3 ) return FALSE;
-  Vec3_Copy( tmp, *out );
+  Vec3_Copy( tmp, out );
   return TRUE;
 }
 
 
-uint8 Str_As_Vec4( char *s, vec4_t *out )
+uint8 Str_As_Vec4( char *s, vec_t *out )
 {
   vec4_t tmp;
   
@@ -86,7 +86,7 @@ uint8 Str_As_Vec4( char *s, vec4_t *out )
   Vec4_Clear( tmp );
   
   if( sscanf( s, "%lf,%lf,%lf,%lf", &tmp[ 0 ], &tmp[ 1 ], &tmp[ 2 ], &tmp[ 3 ] ) != 4 ) return FALSE;
-  Vec4_Copy( tmp, *out );
+  Vec4_Copy( tmp, out );
   return TRUE;
 }
 

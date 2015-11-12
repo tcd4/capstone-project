@@ -20,6 +20,7 @@
 #define MAX_SPRITES 255
 
 
+/**< images */
 typedef struct sprite_s Sprite;
 
 
@@ -53,7 +54,7 @@ Sprite* load_sprite_from_config( char *file );
  * 
  * @return the loaded sprite or NULL on error
  */
-Sprite* load_sprite( char *image_file, uint32 cols, uint32 rows, uint32 frames, uint8 dynamic );
+Sprite* load_sprite( char *image_file, uint32 cols, uint32 rows, uint32 frames, uint8 dynamic, Dict* config );
 
 /**
  * @brief frees a sprite
