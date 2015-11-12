@@ -66,6 +66,15 @@
 
 /* vector types */
 
+/**< x axis define */
+#define XA 0
+/**< y axis define */
+#define YA 1
+/**< z axis define */
+#define ZA 2
+/**< a axis define */
+#define AA 3
+
 /*< 1d vector type */
 typedef double vec_t;
 
@@ -82,85 +91,85 @@ typedef vec_t vec4_t[ 4 ];
 /* vector macros */
 
 /*< sets a 2d vector */
-#define Vec2_Set( v, a, b )			( v[ 0 ] = a, v[ 1 ] = b )
+#define Vec2_Set( v, a, b )			( v[ XA ] = a, v[ YA ] = b )
 
 /*< subtracts 2 2d vectors */
-#define Vec2_Subtract( a, b, c )	        ( c[ 0 ] = a[ 0 ] - b[ 0 ], c[ 1 ] = a[ 1 ] - b[ 1 ] )
+#define Vec2_Subtract( a, b, c )	        ( c[ XA ] = a[ XA ] - b[ XA ], c[ YA ] = a[ YA ] - b[ YA ] )
 
 /*< adds 2 2d vectors */
-#define Vec2_Add( a, b, c )		        ( c[ 0 ] = a[ 0 ] + b[ 0 ], c[ 1 ] = a[ 1 ] + b[ 1 ] )
+#define Vec2_Add( a, b, c )		        ( c[ XA ] = a[ XA ] + b[ XA ], c[ YA ] = a[ YA ] + b[ YA ] )
 
 /*< finds the dot product of 2 2d vectors */
-#define Vec2_Dot_Product( a, b )                ( a[ 0 ] * b[ 0 ] + a[ 1 ] * b[ 1 ] )
+#define Vec2_Dot_Product( a, b )                ( a[ XA ] * b[ XA ] + a[ YA ] * b[ YA ] )
 
 /*< copys 2d vector a into b */
-#define Vec2_Copy( a, b )		        ( b[ 0 ] = a[ 0 ], b[ 1 ] = a[ 1 ] )
+#define Vec2_Copy( a, b )		        ( b[ XA ] = a[ XA ], b[ YA ] = a[ YA ] )
 
 /*< sets a 2d vector to [ 0, 0 ] */
-#define Vec2_Clear( a )			        ( a[ 0 ] = 0, a[ 1 ] = 0 )
+#define Vec2_Clear( a )			        ( a[ XA ] = 0, a[ YA ] = 0 )
 
 /*< checks if 2 2d vectors are equal */
-#define Vec2_Compare( a, b )		        ( ( a[ 0 ] == b[ 0 ] && a[ 1 ] == b[ 1 ] ) ? 1: 0 )
+#define Vec2_Compare( a, b )		        ( ( a[ XA ] == b[ XA ] && a[ YA ] == b[ YA ] ) ? 1: 0 )
 
 /*< checks if a 2d vector is zeroed */
-#define Vec2_Zeroed( a )			( ( a[ 0 ] == 0 && a[ 1 ] == 0 ) ? 1: 0 )
+#define Vec2_Zeroed( a )			( ( a[ XA ] == 0 && a[ YA ] == 0 ) ? 1: 0 )
 
 /*< scales a 2d vector */
-#define Vec2_Scale( dst, src, factor )          ( dst[ 0 ] = src[ 0 ] * factor, dst[ 1 ] = src[ 1 ] * factor )
+#define Vec2_Scale( dst, src, factor )          ( dst[ XA ] = src[ XA ] * factor, dst[ YA ] = src[ YA ] * factor )
 
 /*< sets a 3d vector */
-#define Vec3_Set( v, a, b, c )			( Vec2_Set( v, a, b ), v[ 2 ] = c )
+#define Vec3_Set( v, a, b, c )			( Vec2_Set( v, a, b ), v[ ZA ] = c )
 
 /*< subtracts 2 3d vectors */
-#define Vec3_Subtract( a, b, c )	        ( Vec2_Subtract( a, b, c ), c[ 2 ] = a[ 2 ] - b[ 2 ] )
+#define Vec3_Subtract( a, b, c )	        ( Vec2_Subtract( a, b, c ), c[ ZA ] = a[ ZA ] - b[ ZA ] )
 
 /*< adds 2 3d vectors */
-#define Vec3_Add( a, b, c )		        ( Vec2_Add( a, b, c ), c[ 2 ] = a[ 2 ] + b[ 2 ] )
+#define Vec3_Add( a, b, c )		        ( Vec2_Add( a, b, c ), c[ ZA ] = a[ ZA ] + b[ ZA ] )
 
 /*< finds the dot product of 2 3d vectors */
-#define Vec3_Dot_Product( a, b )                ( Vec2_Dot_Product( a, b ) + a[ 2 ] * b[ 2 ] )
+#define Vec3_Dot_Product( a, b )                ( Vec2_Dot_Product( a, b ) + a[ ZA ] * b[ ZA ] )
 
 /*< copys 3d vector a into b */
-#define Vec3_Copy( a, b )		        ( Vec2_Copy( a, b ), b[ 2 ] = a[ 2 ] )
+#define Vec3_Copy( a, b )		        ( Vec2_Copy( a, b ), b[ ZA ] = a[ ZA ] )
 
 /*< sets a 3d vector to [ 0, 0, 0 ] */
-#define Vec3_Clear( a )			        ( Vec2_Clear( a ), a[ 2 ] = 0 )
+#define Vec3_Clear( a )			        ( Vec2_Clear( a ), a[ ZA ] = 0 )
 
 /*< checks if 2 3d vectors are equal */
-#define Vec3_Compare( a, b )		        ( ( Vec2_Compare( a, b ) && a[ 2 ] == b[ 2 ] ) ? 1: 0 )
+#define Vec3_Compare( a, b )		        ( ( Vec2_Compare( a, b ) && a[ ZA ] == b[ ZA ] ) ? 1: 0 )
 
 /*< checks if a 3d vector is zeroed */
-#define Vec3_Zeroed( a )			( ( a[ 0 ] == a[ 1 ] == a[ 2 ] == 0 ) ? 1: 0 )
+#define Vec3_Zeroed( a )			( ( a[ XA ] == a[ YA ] == a[ ZA ] == 0 ) ? 1: 0 )
 
 /*< scales a 3d vector */
-#define Vec3_Scale( dst, src, factor )          ( Vec2_Scale( dst, src, factor ), dst[ 2 ] = src[ 2 ] * factor )
+#define Vec3_Scale( dst, src, factor )          ( Vec2_Scale( dst, src, factor ), dst[ ZA ] = src[ ZA ] * factor )
 
 /*< sets a 4d vector */
-#define Vec4_Set( v, a, b, c, d )		( Vec3_Set( v, a, b, c ), v[ 3 ] = d )
+#define Vec4_Set( v, a, b, c, d )		( Vec3_Set( v, a, b, c ), v[ AA ] = d )
 
 /*< subtracts 2 4d vectors */
-#define Vec4_Subtract( a, b, c )	        ( Vec3_Subtract( a, b, c ), c[ 3 ] = a[ 3 ] - b[ 3 ] )
+#define Vec4_Subtract( a, b, c )	        ( Vec3_Subtract( a, b, c ), c[ AA ] = a[ AA ] - b[ AA ] )
 
 /*< adds 2 4d vectors */
-#define Vec4_Add( a, b, c )		        ( Vec3_Add( a, b, c ), c[ 3 ] = a[ 3 ] + b[ 3 ] )
+#define Vec4_Add( a, b, c )		        ( Vec3_Add( a, b, c ), c[ AA ] = a[ AA ] + b[ AA ] )
 
 /*< finds the dot product of 2 4d vectors */
-#define Vec4_Dot_Product( a, b )                ( Vec3_Dot_Product( a, b ) + a[ 3 ] * b[ 3 ] )
+#define Vec4_Dot_Product( a, b )                ( Vec3_Dot_Product( a, b ) + a[ AA ] * b[ AA ] )
 
 /*< copys 4d vector a into b */
-#define Vec4_Copy( a, b )		        ( Vec3_Copy( a, b ), b[ 3 ] = a[ 3 ] )
+#define Vec4_Copy( a, b )		        ( Vec3_Copy( a, b ), b[ AA ] = a[ AA ] )
 
 /*< sets a 4d vector to [ 0, 0, 0, 0 ] */
-#define Vec4_Clear( a )			        ( Vec3_Clear( a ), a[ 3 ] = 0 )
+#define Vec4_Clear( a )			        ( Vec3_Clear( a ), a[ AA ] = 0 )
 
 /*< checks if 2 4d vectors are equal */
-#define Vec4_Compare( a, b )		        ( ( Vec3_Compare( a, b ) && a[ 3 ] == b[ 3 ] ) ? 1: 0 )
+#define Vec4_Compare( a, b )		        ( ( Vec3_Compare( a, b ) && a[ AA ] == b[ AA ] ) ? 1: 0 )
 
 /*< checks if a 4d vector is zeroed */
-#define Vec4_Zeroed( a )			( ( a[ 0 ] == a[ 1 ] == a[ 2 ] == a[ 3 ] == 0 ) ? 1: 0 )
+#define Vec4_Zeroed( a )			( ( a[ XA ] == a[ YA ] == a[ ZA ] == a[ AA ] == 0 ) ? 1: 0 )
 
 /*< scales a 4d vector */
-#define Vec4_Scale( dst, src, factor )          ( Vec3_Scale( dst, src, factor ), dst[ 3 ] = src[ 3 ] * factor )
+#define Vec4_Scale( dst, src, factor )          ( Vec3_Scale( dst, src, factor ), dst[ AA ] = src[ AA ] * factor )
 
 
 
