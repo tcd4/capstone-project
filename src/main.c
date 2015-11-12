@@ -55,11 +55,12 @@ void Init_Systems()
 
 void Start_SDL()
 {
+  /*
   uint32 flags = 0;
   uint32 tmp = 0;
-  
+  */
   Log( INFO, "Initializing SDL" );
-  
+  /*
   Str_As_UInt( Find_In_Dict( _sys_config, "sdl_everything" ), &tmp );
   if( tmp )
   {
@@ -69,8 +70,8 @@ void Start_SDL()
   else
   {
   }
-  
-  if( SDL_Init( flags ) != 0 )
+  */
+  if( SDL_Init( SDL_INIT_EVERYTHING ) != 0 )
   {
     Log( FATAL, "Unable to Initialize SDL" );
     exit( -1 );
@@ -83,6 +84,7 @@ void Start_SDL()
 void Start_Commands()
 {
   init_cmd_system();
+
   if( !add_cmd( TRUE, "game_over", SDLK_ESCAPE, 0, game_over_func, NULL ) )
   {
     Log( FATAL, "game_over command wasn't added" );
@@ -110,18 +112,18 @@ void Loop()
       {
 	_game_over = 1;
       }
-      else if( event.type == SDL_KEYDOWN )
+      else if( event.type == SDL_KEYDOWN || event.type == SDL_JOYBUTTONDOWN )
       {
 	check_cmds( &event );
       }
-      
+    }  
       update_all_entities();
       draw_all_entities();
       
       draw_sprite( test, p, s, s, 0 );
       
       Next_Frame();
-    }
+    
   }
 }
 

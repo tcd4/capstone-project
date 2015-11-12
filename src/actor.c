@@ -19,7 +19,7 @@ typedef struct
 	void			( *Finished )( struct entity_s *self );	
 }Actor;*/
 
-Actor* create_actor( char *file )
+Actor* create_actor( struct entity_s *owner, char *file, void ( *Finished )( struct entity_s *self ) )
 {
   Actor *new;
   Dict *config;
@@ -39,7 +39,7 @@ Actor* create_actor( char *file )
     return NULL;
   }
   
-  new->sprite = load_sprite_from_config( file );
+  new->sprite = load_sprite_from_config( Find_In_Dict( config, "sprite" ) );
   if( !new->sprite )
   {
     Free_Dict( &config );
@@ -47,8 +47,17 @@ Actor* create_actor( char *file )
     return NULL;
   }
   
-  /* init stuff */
+  new->name = strdup( Find_In_Dict( config, "name" ) );
+  Str_As_Int( Find_In_Dict( config, "start" ), &new->start );
+  Str_As_Int( Find_In_Dict( config, "end" ), &new->end );
+  Str_As_Int( Find_In_Dict( config, "frame_rate" ), &new->frame_rate );
+  Str_As_Int( Find_In_Dict( config, "type" ), &new->type );
+  
+  new->owner = owner;
+  new->frame = new->start;
+  new->num_frames = new->end - new->start;
   new->direction = FORWARD;
+  new->Finished = Finished;
   
   Free_Dict( &config );
   return new;

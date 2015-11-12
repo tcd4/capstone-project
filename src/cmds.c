@@ -143,29 +143,60 @@ void check_cmds( SDL_Event *event )
 void check_cmd( SDL_Event *event, Cmd *cmd )
 {
   if( !event || !cmd || !cmd->inuse ) return;
-   
-  if( event->key.keysym.sym == cmd->id )
-  { 
-    if( cmd->hold_time )
-    {
-      if( cmd->time_pressed > cmd->hold_time )
+
+  if( event->type == SDL_KEYDOWN )
+  {
+    if( event->key.keysym.sym == cmd->id )
+    { 
+      if( cmd->hold_time )
       {
-	cmd->start_time = 0;
-	cmd->time_pressed = 0;
-	cmd->event( cmd->event_param );
-      }
-      else if( !cmd->start_time )
-      {
-	cmd->start_time = Get_Time();
+	if( cmd->time_pressed > cmd->hold_time )
+	{
+	  cmd->start_time = 0;
+	  cmd->time_pressed = 0;
+	  cmd->event( cmd->event_param );
+	}
+	else if( !cmd->start_time )
+	{
+	  cmd->start_time = Get_Time();
+	}
+	else
+	{
+	  cmd->time_pressed = Get_Time() - cmd->start_time;
+	}
       }
       else
       {
-	cmd->time_pressed = Get_Time() - cmd->start_time;
+	cmd->event( cmd->event_param );
       }
     }
-    else
-    {
-      cmd->event( cmd->event_param );
+  }
+  else if( event->type == SDL_JOYBUTTONDOWN )
+  {
+    Log( TRACE, "%s button down", cmd->name );
+    if( event->cbutton.button == cmd->id )
+    { 
+      if( cmd->hold_time )
+      {
+	if( cmd->time_pressed > cmd->hold_time )
+	{
+	  cmd->start_time = 0;
+	  cmd->time_pressed = 0;
+	  cmd->event( cmd->event_param );
+	}
+	else if( !cmd->start_time )
+	{
+	  cmd->start_time = Get_Time();
+	}
+	else
+	{
+	  cmd->time_pressed = Get_Time() - cmd->start_time;
+	}
+      }
+      else
+      {
+	cmd->event( cmd->event_param );
+      }
     }
   }
 }

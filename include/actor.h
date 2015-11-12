@@ -53,11 +53,13 @@ typedef struct
 /**
  * @brief creates a new actor
  * 
- * @param file	the file to load the actor from
+ * @param owner		the owner of the actor
+ * @param file		the file to load the actor from
+ * @param Finished	the function to call when the animation is over
  *
  * @return a pointer to the newly created actor or NULL
  */
-Actor* create_actor( char *file );
+Actor* create_actor( struct entity_s *owner, char *file, void ( *Finished )( struct entity_s *self ) );
 
 /**
  * @brief draws an actor to the screen
