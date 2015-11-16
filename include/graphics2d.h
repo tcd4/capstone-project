@@ -34,6 +34,11 @@ void Close_2DGraphics();
 void Next_Frame();
 
 /**
+ * @brief clears the frame buffer
+ */
+void Clear_Frame();
+
+/**
  * @brief gets a pointer to the game screen
  * 
  * @return a pointer to the game screen or NULL on error

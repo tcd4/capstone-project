@@ -71,7 +71,7 @@ void Init_2DGraphics( Dict *config )
     exit( -1 );
   }
   
-  SDL_SetRenderDrawColor( _renderer, 0, 0, 0, 255 );
+  SDL_SetRenderDrawColor( _renderer, _background_color_v[ 0 ], _background_color_v[ 1 ], _background_color_v[ 2 ], _background_color_v[ 3 ] );
   SDL_RenderClear( _renderer );
   SDL_RenderPresent( _renderer );
   SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "linear" );
@@ -98,8 +98,6 @@ void Init_2DGraphics( Dict *config )
   /* init camera */
   /* init mouse  */
   
-  _current_time = SDL_GetTicks();
-  
   Log( INFO, "Graphics Initialized" );
 }
 
@@ -107,7 +105,7 @@ void Init_2DGraphics( Dict *config )
 void Next_Frame()
 {  
   SDL_RenderPresent( _renderer );
-  
+
   /* delay the frame */
   _previous_time = _current_time;
   _current_time = SDL_GetTicks();
@@ -118,6 +116,15 @@ void Next_Frame()
     SDL_Delay( _frame_delay - _delay_diff );
 
   _fps = 1000.0 / MAX( SDL_GetTicks() - _previous_time, 0.001 );
+}
+
+
+void Clear_Frame()
+{
+  if( !_renderer ) return;
+  
+  SDL_SetRenderDrawColor( _renderer, _background_color_v[ 0 ], _background_color_v[ 1 ], _background_color_v[ 2 ], _background_color_v[ 3 ] );
+  SDL_RenderClear( _renderer );
 }
 
 

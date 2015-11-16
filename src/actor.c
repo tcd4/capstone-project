@@ -1,23 +1,5 @@
 #include "actor.h"
-/*
-typedef struct
-{
-	int			inuse;		
-	struct entity_s		*owner;		
-	char			*name;		
-	Sprite			*sprite;	
-	
-	int			num_frames;	
-	int			frame;		
-	int			frame_rate;	
-	int			start;		
-	int			end;		
-	
-	int			direction;	
-	int			type;		
-	
-	void			( *Finished )( struct entity_s *self );	
-}Actor;*/
+
 
 Actor* create_actor( struct entity_s *owner, char *file, void ( *Finished )( struct entity_s *self ) )
 {
@@ -66,20 +48,24 @@ Actor* create_actor( struct entity_s *owner, char *file, void ( *Finished )( str
 
 void draw_actor( Actor *actor )
 {
-  /* make sure to only draw with the frame rate */
-  if( Get_Frame() % actor->frame_rate ) return;
-    
+  if( !actor ) return;
+  
   draw_sprite( actor->sprite, actor->owner->position, actor->owner->position, actor->owner->position, actor->frame );
+  
+  /* make sure to only update with the frame rate */
+  if( Get_Frame() % actor->frame_rate ) return;
   
   if( actor->type == ANIM_NO ) return;
   
-  /* call the finished function */
+  /* call the finished function if the animation is over */
   if( ( actor->frame == actor->end ) && ( actor->Finished ) && ( !actor->done ) )
+  {
     actor->Finished( actor->owner );
+    actor->done = 1;
+  }
     
   /* update the frame */
   actor->frame += actor->direction;
-  actor->done = 1;
   
   /* make sure we don't go past the final frame or the first frame */
   if( actor->frame > actor->end )

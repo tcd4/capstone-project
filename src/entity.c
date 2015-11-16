@@ -69,10 +69,8 @@ void free_entity( Entity *ent )
   int i;
   
   _num_ents--;
-
   ent->inuse = 0;
 
-  /* free actors */
   for( i = 0; i < MAX_ACTORS; i++ )
   {
     if( ent->actors[ i ] )
@@ -107,7 +105,8 @@ void update_entity( Entity *ent )
 {
   if( !ent || !ent->inuse ) return;
   
-  Vec2_Copy( ent->body->position, ent->position );
+  if( ent->body )
+    Vec2_Copy( ent->body->position, ent->position );
   
   if( ent->next_think <= Get_Time() )
   {
@@ -175,6 +174,17 @@ uint8 add_draw_state( Entity *ent, char *file, void ( *Finished )( struct entity
   }
   
   return FALSE;
+}
+
+
+uint8 add_ent_to_space( Entity *ent )
+{
+  if( !ent || !ent->body ) return FALSE;
+  
+  if( !add_body( _ent_space, ent->body ) )
+    return FALSE;
+  
+  return TRUE;
 }
 
 

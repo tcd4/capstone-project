@@ -2,5 +2,5 @@ sprite: ../cfg/test_sprite.def
 name: test
 start: 0
 end: 7
-frame_rate: 10
+frame_rate: 5
 type: 2

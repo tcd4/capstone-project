@@ -102,6 +102,8 @@ void Loop()
   
   while( !_game_over )
   {
+    Clear_Frame();
+    
     while( SDL_PollEvent( &event ) )
     {
       if( event.type == SDL_QUIT )
@@ -109,10 +111,11 @@ void Loop()
       else
 	check_cmds( &event );
     }  
-      /*update_all_entities();*/
-      draw_all_entities();
-      
-      Next_Frame();
+    
+    update_all_entities();
+    draw_all_entities();
+    
+    Next_Frame();
   }
 }
 
@@ -120,6 +123,7 @@ void Loop()
 void game_start()
 {
   Entity *new;
+  vec2_t s,p,v,a;
   
   new = create_entity();
   if( !new )
@@ -128,11 +132,16 @@ void game_start()
     exit( -1 );
   }
   
-  Vec2_Set( new->position, 1000, 500 );
   add_draw_state( new, "../cfg/test_actor.def", NULL );
   new->draw_state = 0;
   new->visible = 1;
   
+  Vec2_Set( s, 50, 50 );
+  Vec2_Set( p, 1000, 500 );
+  Vec2_Set( v, 0, 0 );
+  Vec2_Set( a, 0, 0 );
+  new->body = create_body( new, 1, s, p, v, a, NULL );
+  add_ent_to_space( new );
   Log( TRACE, "Game Started" ); 
 }
 

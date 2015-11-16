@@ -131,5 +131,14 @@ void draw_all_entities();
  */
 uint8 add_draw_state( Entity *ent, char *file, void ( *Finished )( struct entity_s *self ) );
 
+/**
+ * @brief adds an entity to the entity physics space
+ * 
+ * @param ent	the entity to add
+ * 
+ * @return TRUE on success, FALSE on failure
+ */
+uint8 add_ent_to_space( Entity *ent );
+
 
 #endif
