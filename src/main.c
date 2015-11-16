@@ -85,7 +85,7 @@ void Start_Commands()
 {
   init_cmd_system();
 
-  if( !add_cmd( TRUE, "game_over", SDLK_ESCAPE, 0, game_over_func, NULL ) )
+  if( !add_cmd( TRUE, "game_over", SDL_KEYUP, SDLK_ESCAPE, 0, game_over_func, NULL ) )
   {
     Log( FATAL, "game_over command wasn't added" );
     exit( -1 );
@@ -112,7 +112,7 @@ void Loop()
       {
 	_game_over = 1;
       }
-      else if( event.type == SDL_KEYDOWN || event.type == SDL_JOYBUTTONDOWN )
+      else
       {
 	check_cmds( &event );
       }
@@ -123,7 +123,6 @@ void Loop()
       draw_sprite( test, p, s, s, 0 );
       
       Next_Frame();
-    
   }
 }
 

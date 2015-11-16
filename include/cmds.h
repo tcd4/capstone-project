@@ -22,6 +22,7 @@ typedef struct cmd_s
 {
   uint8		inuse;		/**< determines if the command is being used */
   char		*name;		/**< the name of the command */
+  uint32	type;		/**< the type of event for the command to activate */
   int		id;		/**< the key to press for the command to happen */
   uint32	hold_time;	/**< the time needed to hold the key for the command to happen */
   uint32	time_pressed;	/**< the amount of time the key has been press */
@@ -60,6 +61,7 @@ void check_cmd( SDL_Event *event, Cmd *cmd );
  * 
  * @param on	determines if the command will immediately be active
  * @param name	the name of the Cmd
+ * @param type	the type of event for the command to activate
  * @param id	the key to press for the Cmd to happen
  * @param hold	the time needed to hold the key for the Cmd to happen
  * @param event	the function to call when the command is activated 
@@ -67,7 +69,7 @@ void check_cmd( SDL_Event *event, Cmd *cmd );
  * 
  * @return TRUE on success, FALSE on failure
  */
-uint8 add_cmd( uint8 on, char *name, int id, uint32 hold, EventNotify event, dataptr param );
+uint8 add_cmd( uint8 on, char *name, uint32 type, int id, uint32 hold, EventNotify event, dataptr param );
 
 /**
  * @brief turns on a Cmd

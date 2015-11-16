@@ -6,7 +6,7 @@ static GSList		*_cmd_list_iter = NULL;	/**< an iterator for _cmd_list */
 
 
 static Cmd*	_find_cmd_by_name( char *name );	/**< finds a command in the command list */
-
+static void	_cmd_hit( Cmd *cmd );			/**< updates the command info when the command is activated */
 
 void init_cmd_system()
 {
@@ -48,7 +48,7 @@ Cmd* _find_cmd_by_name( char *name )
 }
 
 
-uint8 add_cmd( uint8 on, char *name, int id, uint32 hold, EventNotify event, dataptr param )
+uint8 add_cmd( uint8 on, char *name, uint32 type, int id, uint32 hold, EventNotify event, dataptr param )
 {
   Cmd *new = NULL;
   
@@ -65,6 +65,7 @@ uint8 add_cmd( uint8 on, char *name, int id, uint32 hold, EventNotify event, dat
   }
   
   new->name = strdup( name );
+  new->type = type;
   new->id = id;
   new->hold_time = hold;
   new->event = event;
@@ -130,6 +131,8 @@ void close_cmd_system()
 
 void check_cmds( SDL_Event *event )
 {
+  if( !event ) return;
+  
   _cmd_list_iter = _cmd_list->next;
   
   while( _cmd_list_iter )
@@ -142,62 +145,48 @@ void check_cmds( SDL_Event *event )
 
 void check_cmd( SDL_Event *event, Cmd *cmd )
 {
-  if( !event || !cmd || !cmd->inuse ) return;
+  if( !event || !cmd || !cmd->inuse || ( cmd->type != event->type ) ) return;
 
-  if( event->type == SDL_KEYDOWN )
+  if( event->type == SDL_KEYDOWN || event->type == SDL_KEYUP )
   {
     if( event->key.keysym.sym == cmd->id )
-    { 
-      if( cmd->hold_time )
-      {
-	if( cmd->time_pressed > cmd->hold_time )
-	{
-	  cmd->start_time = 0;
-	  cmd->time_pressed = 0;
-	  cmd->event( cmd->event_param );
-	}
-	else if( !cmd->start_time )
-	{
-	  cmd->start_time = Get_Time();
-	}
-	else
-	{
-	  cmd->time_pressed = Get_Time() - cmd->start_time;
-	}
-      }
-      else
-      {
-	cmd->event( cmd->event_param );
-      }
+      _cmd_hit( cmd );
+  }
+  else if( event->type == SDL_JOYBUTTONDOWN || event->type == SDL_JOYBUTTONUP )
+  {
+    if( event->jbutton.button == cmd->id )
+      _cmd_hit( cmd );
+  }
+  else if( event->type == SDL_CONTROLLERBUTTONDOWN || event->type == SDL_CONTROLLERBUTTONUP )
+  {
+    if( event->cbutton.button == cmd->id )
+      _cmd_hit( cmd );
+  }
+}
+
+
+void _cmd_hit( Cmd *cmd )
+{
+  if( cmd->hold_time )
+  {
+    if( cmd->time_pressed > cmd->hold_time )
+    {
+      cmd->start_time = 0;
+      cmd->time_pressed = 0;
+      cmd->event( cmd->event_param );
+    }
+    else if( !cmd->start_time )
+    {
+      cmd->start_time = Get_Time();
+    }
+    else
+    {
+      cmd->time_pressed = Get_Time() - cmd->start_time;
     }
   }
-  else if( event->type == SDL_JOYBUTTONDOWN )
+  else
   {
-    Log( TRACE, "%s button down", cmd->name );
-    if( event->cbutton.button == cmd->id )
-    { 
-      if( cmd->hold_time )
-      {
-	if( cmd->time_pressed > cmd->hold_time )
-	{
-	  cmd->start_time = 0;
-	  cmd->time_pressed = 0;
-	  cmd->event( cmd->event_param );
-	}
-	else if( !cmd->start_time )
-	{
-	  cmd->start_time = Get_Time();
-	}
-	else
-	{
-	  cmd->time_pressed = Get_Time() - cmd->start_time;
-	}
-      }
-      else
-      {
-	cmd->event( cmd->event_param );
-      }
-    }
+    cmd->event( cmd->event_param );
   }
 }
 
