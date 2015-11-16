@@ -421,4 +421,15 @@ typedef struct
 }Circ;
 
 
+#ifndef MIN
+/**< finds the min out of 2 variables */
+#define MIN( a, b )     ( ( a <= b ) ? a : b );
+#endif
+
+#ifndef MAX
+/**< finds the max out of 2 variables */
+#define MAX( a, b )     ( ( a >= b ) ? a : b );
+#endif
+
+
 #endif

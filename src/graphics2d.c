@@ -7,6 +7,7 @@ static uint32	_current_time;		/**< the current runtime of the program */
 static uint32	_current_frame = 0;	/**< the current frame */
 static uint32	_previous_time = 0;	/**< the time of the previous frame */
 static uint32	_delay_diff;		/**< the difference between current_time and previous time */
+static uint32	_fps;
 
 static vec2_t		_resolution;		/**< the resolution of the screen */
 static vec2_t		_render_resolution;	/**< the renderer's resolution */
@@ -111,9 +112,12 @@ void Next_Frame()
   _previous_time = _current_time;
   _current_time = SDL_GetTicks();
   _delay_diff = _current_time - _previous_time;
+  _current_frame++;
   
   if( _delay_diff < _frame_delay )
     SDL_Delay( _frame_delay - _delay_diff );
+
+  _fps = 1000.0 / MAX( SDL_GetTicks() - _previous_time, 0.001 );
 }
 
 

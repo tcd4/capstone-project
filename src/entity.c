@@ -66,11 +66,18 @@ Entity* create_entity()
 
 void free_entity( Entity *ent )
 {
+  int i;
+  
   _num_ents--;
 
   ent->inuse = 0;
 
   /* free actors */
+  for( i = 0; i < MAX_ACTORS; i++ )
+  {
+    if( ent->actors[ i ] )
+      free_actor( &ent->actors[ i ] );
+  }
   
   if( ent->name )
     free( ent->name );
@@ -134,7 +141,8 @@ void draw_entity( Entity *ent )
   if( ent->Draw )
     ent->Draw( ent );
 
-  /* draw actor */
+  if( ent->actors[ ent->draw_state ] )
+    draw_actor( ent->actors[ ent->draw_state ] );
 }
 
 
@@ -148,6 +156,25 @@ void draw_all_entities()
     if( _ent_list[ i ].inuse && _ent_list[ i ].visible )
       draw_entity( &_ent_list[ i ] );
   }
+}
+
+
+uint8 add_draw_state( Entity *ent, char *file, void ( *Finished )( struct entity_s *self ) )
+{
+  int i;
+  
+  if( !ent || !file ) return FALSE;
+  
+  for( i = 0; i < MAX_ACTORS; i++ )
+  {
+    if( !ent->actors[ i ] )
+    {
+      ent->actors[ i ] = create_actor( ent, file, Finished );
+      return TRUE;
+    }
+  }
+  
+  return FALSE;
 }
 
 

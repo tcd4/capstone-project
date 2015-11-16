@@ -66,45 +66,45 @@ Actor* create_actor( struct entity_s *owner, char *file, void ( *Finished )( str
 
 void draw_actor( Actor *actor )
 {
-  /* draw the actor */
-  if( !( Get_Frame() % actor->frame_rate ) )
-    draw_sprite( actor->sprite, actor->owner->position, actor->owner->position, actor->owner->position, actor->frame );
+  /* make sure to only draw with the frame rate */
+  if( Get_Frame() % actor->frame_rate ) return;
+    
+  draw_sprite( actor->sprite, actor->owner->position, actor->owner->position, actor->owner->position, actor->frame );
+  
+  if( actor->type == ANIM_NO ) return;
   
   /* call the finished function */
   if( ( actor->frame == actor->end ) && ( actor->Finished ) && ( !actor->done ) )
     actor->Finished( actor->owner );
     
   /* update the frame */
-  if( actor->type != ANIM_NO )
-  {
-    actor->frame += actor->direction;
-    actor->done = 1;
-    
-    /* make sure we don't go past the final frame or the first frame */
-    if( actor->frame > actor->end )
-    { 
-      /* switch direction if oscillating, loop if looping, set the actor to the end frame if else */
-      if( actor->type == ANIM_OSCI )
-      {
-	actor->direction = REVERSE;
-	actor->frame = actor->end;
-      }
-      else if( actor->type == ANIM_LOOP )
-	actor->frame = actor->start;
-      else
-	actor->frame = actor->end;
-    }
-    else if( actor->frame < actor->start )
+  actor->frame += actor->direction;
+  actor->done = 1;
+  
+  /* make sure we don't go past the final frame or the first frame */
+  if( actor->frame > actor->end )
+  { 
+    /* switch direction if oscillating, loop if looping, set the actor to the end frame if else */
+    if( actor->type == ANIM_OSCI )
     {
-      /* switch direction if oscillating else set the actor to the starting frame if else */
-      if( actor->type == ANIM_OSCI )
-      {
-	actor->direction = FORWARD;
-	actor->frame = actor->start;
-      }
-      else
-	actor->frame = actor->start;
+      actor->direction = REVERSE;
+      actor->frame = actor->end;
     }
+    else if( actor->type == ANIM_LOOP )
+      actor->frame = actor->start;
+    else
+      actor->frame = actor->end;
+  }
+  else if( actor->frame < actor->start )
+  {
+    /* switch direction if oscillating else set the actor to the starting frame if else */
+    if( actor->type == ANIM_OSCI )
+    {
+      actor->direction = FORWARD;
+      actor->frame = actor->start;
+    }
+    else
+      actor->frame = actor->start;
   }
 }
 

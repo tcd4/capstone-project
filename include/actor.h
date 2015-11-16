@@ -29,7 +29,7 @@ typedef enum
 
 
 /**< animation handler */
-typedef struct
+typedef struct actor_s
 {
 	int			inuse;		/**< determines if the actor is being used */
 	int			done;		/**< determines if the animation finished */

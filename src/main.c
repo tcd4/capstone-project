@@ -20,6 +20,7 @@ static void	Start_SDL();
 static void	Start_Commands();
 static void	Exit_Systems();
 static void	Loop();
+static void 	game_start();
 
 void	game_over_func( dataptr data );
 
@@ -96,34 +97,43 @@ void Start_Commands()
 void Loop()
 {
   SDL_Event event;
-  Sprite *test;
-  vec2_t p, s;
   
-  Vec2_Set( p, 20, 20 );
-  Vec2_Clear( s );
-  
-  test = load_sprite_from_config( "../cfg/test_sprite.def" );
+  game_start();
   
   while( !_game_over )
   {
     while( SDL_PollEvent( &event ) )
     {
       if( event.type == SDL_QUIT )
-      {
 	_game_over = 1;
-      }
       else
-      {
 	check_cmds( &event );
-      }
     }  
-      update_all_entities();
+      /*update_all_entities();*/
       draw_all_entities();
-      
-      draw_sprite( test, p, s, s, 0 );
       
       Next_Frame();
   }
+}
+
+
+void game_start()
+{
+  Entity *new;
+  
+  new = create_entity();
+  if( !new )
+  {
+    Log( FATAL, "fuck" );
+    exit( -1 );
+  }
+  
+  Vec2_Set( new->position, 1000, 500 );
+  add_draw_state( new, "../cfg/test_actor.def", NULL );
+  new->draw_state = 0;
+  new->visible = 1;
+  
+  Log( TRACE, "Game Started" ); 
 }
 
 
@@ -144,3 +154,6 @@ void Exit_Systems()
   SDL_Quit();
   Exit_Logging();
 }
+
+
+/* eof */

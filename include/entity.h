@@ -15,9 +15,11 @@
 #include "physics.h"
 #include "logger.h"
 #include "graphics2d.h"
+#include "actor.h"
 
 
 #define MAX_ENTITIES 128
+#define MAX_ACTORS 10
 #define PHYSICS_STEPS 5
 
 
@@ -35,26 +37,26 @@ enum
 /**< the objects that interact with the game world */
 typedef struct entity_s
 {
-	int			inuse;		/**< determines if the entities is in use */
+	int			inuse;			/**< determines if the entities is in use */
 
-	char			*name;		/**< name of the entity type */
+	char			*name;			/**< name of the entity type */
 
-	struct entity_s		*self;		/**< pointer to itself */
-	struct entity_s		*owner;		/**< pointer to the entity that owns this one */
+	struct entity_s		*self;			/**< pointer to itself */
+	struct entity_s		*owner;			/**< pointer to the entity that owns this one */
 
-	/* need actor stuff */
+	struct actor_s		*actors[ MAX_ACTORS ];	/**< an array of actors for drawing */
+	uint32			draw_state;		/**< the state the entity is in for drawing */
+	uint8			visible;		/**< determines if the entity is drawn or not */
 	
-	uint16			state;		/**< the state of the entity */
-	uint8			visible;	/**< determines if the entity is drawn or not */
+	struct body_s		*body;			/**< the entity's body in space */
+	vec2_t			position;		/**< position of the entity */
+	vec2_t			origin;			/**< center of the entity */
+	vec2_t			scale;			/**< scale of the entity */
+	vec2_t			rotation;		/**< rotation of the entity */
 	
-	struct body_s		*body;		/**< the entity's body in space */
-	vec2_t			position;	/**< position of the entity */
-	vec2_t			origin;		/**< center of the entity */
-	vec2_t			scale;		/**< scale of the entity */
-	vec2_t			rotation;	/**< rotation of the entity */
-
-	Uint32			think_rate;	/**< determines how often the entity thinks */
-	Uint32			next_think;	/**< determines when the entity will think next */
+	uint16			think_state;		/**< the state of the for thinking entity */
+	Uint32			think_rate;		/**< determines how often the entity thinks */
+	Uint32			next_think;		/**< determines when the entity will think next */
 
 	void			( *Draw )( struct entity_s *self );				/**< pointer to the entity's draw function */
 	void			( *Free )( struct entity_s *self );				/**< pointer to the entity's free function */
@@ -117,6 +119,17 @@ void draw_entity( Entity *ent );
  * @brief draws all the entities to the screen
  */
 void draw_all_entities();
+
+/**
+ * @brief adds a draw new draw state to the entity
+ * 
+ * @param ent	the entity to add to
+ * 
+ * 
+ * 
+ * @return TRUE if successful, FALSE if else
+ */
+uint8 add_draw_state( Entity *ent, char *file, void ( *Finished )( struct entity_s *self ) );
 
 
 #endif
