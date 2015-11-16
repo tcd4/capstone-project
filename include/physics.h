@@ -41,13 +41,11 @@ typedef struct space_s Space;
  * @param shape_type	the shape of the body
  * @param shape		the struct for the shape
  * @param position	the starting position of the body in space
- * @param velocity	the starting velocity of the body in space
- * @param acceleration	the starting acceleration of the body in space
  * @param collide	the function to call when the body collides with another body
  * 
  * @return a pointer to the newly created body or NULL on error
  */
-Body* create_body( struct entity_s *owner, uint32 group, vec2_t size, vec2_t position, vec2_t velocity, vec2_t acceleration, CollisionNotify collide );
+Body* create_body( struct entity_s *owner, uint32 group, vec2_t size, vec2_t position, CollisionNotify collide );
 
 /**
  * @brief frees a body

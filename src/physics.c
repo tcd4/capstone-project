@@ -15,11 +15,11 @@ static void _update_body( Space *space, Body *body );
 static void _check_for_collisions( Space *space, Body *body, double step_factor );
 
 
-Body* create_body( struct entity_s *owner, uint32 group, vec2_t size, vec2_t position, vec2_t velocity, vec2_t acceleration, CollisionNotify collide )
+Body* create_body( struct entity_s *owner, uint32 group, vec2_t size, vec2_t position, CollisionNotify collide )
 {
   Body *new;
   
-  new = g_new( Body, 1 );
+  new = g_new0( Body, 1 );
   if( !new )
   {
     Log( WARN, "The body for %s could not be created.", owner->name );
@@ -32,8 +32,6 @@ Body* create_body( struct entity_s *owner, uint32 group, vec2_t size, vec2_t pos
   
   Vec2_Copy( size, new->size );
   Vec2_Copy( position, new->position );
-  Vec2_Copy( velocity, new->velocity );
-  Vec2_Copy( acceleration, new->acceleration );
   
   return new;
 }
@@ -129,8 +127,10 @@ void _update_body( Space *space, Body *body )
   
   /* move the body */
   Vec2_Add( step_vector_vel, step_vector_accel, step_vector_vel );
+  Vec2_Add( body->velocity, step_vector_accel, body->velocity );
   Vec2_Add( step_vector_vel, body->position, body->position );
   
+  Log( TRACE, "v = %lf,%lf", step_vector_vel[ 0 ], step_vector_vel[ 1 ] );
   _check_for_collisions( space, body, space->step_factor );
 }
 

@@ -123,7 +123,7 @@ void Loop()
 void game_start()
 {
   Entity *new;
-  vec2_t s,p,v,a;
+  vec2_t s,p;
   
   new = create_entity();
   if( !new )
@@ -138,10 +138,11 @@ void game_start()
   
   Vec2_Set( s, 50, 50 );
   Vec2_Set( p, 1000, 500 );
-  Vec2_Set( v, 0, 0 );
-  Vec2_Set( a, 0, 0 );
-  new->body = create_body( new, 1, s, p, v, a, NULL );
+  new->body = create_body( new, 1, s, p, NULL );
+  Vec2_Set( new->body->velocity, 10, 0 );
+  Vec2_Set( new->body->acceleration, -0.1, 0 );
   add_ent_to_space( new );
+  
   Log( TRACE, "Game Started" ); 
 }
 
