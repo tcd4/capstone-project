@@ -9,4 +9,7 @@
  */
 
 
+#define ENT_WORLD 0
+
+
 #endif

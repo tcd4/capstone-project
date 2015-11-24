@@ -9,4 +9,7 @@
  */
 
 
+#define ENT_PLAYER 1
+
+
 #endif

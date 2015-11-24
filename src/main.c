@@ -51,7 +51,6 @@ void Init_Systems()
   init_sprite_system();
   init_entity_system();
   
-  Log( TRACE, "num joysticks = %i", SDL_NumJoysticks() );
   if( SDL_NumJoysticks() > 0 )
   {
     _controller = SDL_GameControllerOpen( 0 );
