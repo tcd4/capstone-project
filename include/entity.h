@@ -38,11 +38,13 @@ enum
 typedef struct entity_s
 {
 	int			inuse;			/**< determines if the entities is in use */
-
+	
 	char			*name;			/**< name of the entity type */
-
+	uint32			ent_type;		/**< the type of entity */
+	
 	struct entity_s		*self;			/**< pointer to itself */
 	struct entity_s		*owner;			/**< pointer to the entity that owns this one */
+	dataptr			custom;			/**< pointer to custom entity data */
 
 	struct actor_s		*actors[ MAX_ACTORS ];	/**< an array of actors for drawing */
 	uint32			draw_state;		/**< the state the entity is in for drawing */

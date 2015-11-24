@@ -32,7 +32,7 @@ typedef enum
 typedef struct actor_s
 {
 	int			inuse;		/**< determines if the actor is being used */
-	int			done;		/**< determines if the animation finished */
+	uint8			done;		/**< determines if the animation finished */
 	struct entity_s		*owner;		/**< pointer to the entity that does has this animation */
 	char			*name;		/**< the name of the animation */
 	Sprite			*sprite;	/**< the spritesheet for the animation */

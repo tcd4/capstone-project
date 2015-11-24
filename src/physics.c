@@ -130,7 +130,6 @@ void _update_body( Space *space, Body *body )
   Vec2_Add( body->velocity, step_vector_accel, body->velocity );
   Vec2_Add( step_vector_vel, body->position, body->position );
   
-  Log( TRACE, "v = %lf,%lf", step_vector_vel[ 0 ], step_vector_vel[ 1 ] );
   _check_for_collisions( space, body, space->step_factor );
 }
 

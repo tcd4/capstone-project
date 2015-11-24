@@ -98,7 +98,8 @@ void draw_actor( Actor *actor )
 void reset_actor( Actor *actor )
 {
   actor->frame = actor->start;
-  actor->direction = 1;
+  actor->direction = FORWARD;
+  actor->done = 0;
 }
 
 

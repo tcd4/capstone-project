@@ -11,8 +11,9 @@
 #define SYS_CONFIG	"../cfg/sys_config.def"
 
 
-static uint8 	_game_over = 0;
-static Dict	*_sys_config = NULL;
+static uint8 			_game_over = 0;
+static Dict			*_sys_config = NULL;
+static SDL_GameController	*_controller;
 
 
 static void	Init_Systems();
@@ -49,6 +50,14 @@ void Init_Systems()
   Init_2DGraphics( _sys_config );
   init_sprite_system();
   init_entity_system();
+  
+  Log( TRACE, "num joysticks = %i", SDL_NumJoysticks() );
+  if( SDL_NumJoysticks() > 0 )
+  {
+    _controller = SDL_GameControllerOpen( 0 );
+    if( !_controller )
+      Log( ERROR, "Unable to open controller. SDL Error: %s", SDL_GetError() );
+  }
   
   Log( INFO, "All systems initialized." );
 }
@@ -156,6 +165,8 @@ void game_over_func( dataptr data )
 void Exit_Systems()
 {
   Log( INFO, "Shutting Down Systems!" );
+  
+  SDL_GameControllerClose( _controller );
   close_cmd_system();
   close_sprite_system();
   close_entity_system();
