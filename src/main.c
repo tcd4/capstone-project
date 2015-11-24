@@ -166,7 +166,8 @@ void Exit_Systems()
 {
   Log( INFO, "Shutting Down Systems!" );
   
-  SDL_GameControllerClose( _controller );
+  if( _controller )
+    SDL_GameControllerClose( _controller );
   close_cmd_system();
   close_sprite_system();
   close_entity_system();
