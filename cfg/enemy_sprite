@@ -1,0 +1,5 @@
+image_file: ../assets/sprites/enemy.png
+columns: 8
+rows: 4
+frames: 32
+dynamic: 0

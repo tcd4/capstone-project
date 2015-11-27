@@ -1,0 +1,13 @@
+bg: ../cfg/level_bg.def
+ground: ../cfg/level_ground.def
+platform: ../cfg/level_platform.def
+small_platform: ../cfg/level_small_platform.def
+
+ground_offset: 0,20
+ground_size: 1920,80
+
+platform_offset: 5,6
+platform_size: 270,31
+
+spo: 6,6
+sps: 31,31

@@ -1,0 +1,6 @@
+sprite: ../cfg/enemy_sprite.def
+name: enemy_walk
+start: 16
+end: 19
+frame_rate: 5
+type: 2

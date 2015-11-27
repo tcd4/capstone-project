@@ -1,0 +1,5 @@
+image_file: ../assets/sprites/platform.png
+columns: 1
+rows: 1
+frames: 1
+dynamic: 0

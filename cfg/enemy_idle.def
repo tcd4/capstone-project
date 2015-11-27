@@ -1,0 +1,6 @@
+sprite: ../cfg/enemy_sprite.def
+name: enemy_idle
+start: 0
+end: 0
+frame_rate: 5
+type: 0

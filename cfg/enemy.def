@@ -1,0 +1,7 @@
+idle: ../cfg/enemy_idle.def
+walk: ../cfg/enemy_walk.def
+attack: ../cfg/enemy_attack.def
+die: ../cfg/enemy_die.def
+
+offset: 26,25
+size: 43,65

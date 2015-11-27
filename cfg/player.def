@@ -1,0 +1,7 @@
+idle: ../cfg/player_idle.def
+walk: ../cfg/player_walk.def
+attack: ../cfg/player_attack.def
+die: ../cfg/player_die.def
+
+offset: 74,27
+size: 41,73
