@@ -27,3 +27,6 @@
 
 # Dependency Files
 *.dep
+
+# Sprite Development Files
+*.xcf
