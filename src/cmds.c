@@ -8,6 +8,7 @@ static GSList		*_cmd_list_iter = NULL;	/**< an iterator for _cmd_list */
 static Cmd*	_find_cmd_by_name( char *name );	/**< finds a command in the command list */
 static void	_cmd_hit( Cmd *cmd );			/**< updates the command info when the command is activated */
 
+
 void init_cmd_system()
 {
   if( cmd_system_is_init() ) return;
@@ -41,7 +42,7 @@ Cmd* _find_cmd_by_name( char *name )
     
     if( !strcmp( tmp->name, name ) ) return tmp;
     
-    _cmd_list_iter = _cmd_list->next;
+    _cmd_list_iter = _cmd_list_iter->next;
   }
   
   return NULL;

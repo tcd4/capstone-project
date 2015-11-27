@@ -161,6 +161,8 @@ void	Exit_Logging()
     
     if( _log_file != stdout )
       fclose( _log_file );
+    
+    SDL_Quit();
   }
 }
 

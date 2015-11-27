@@ -5,9 +5,25 @@ small_platform: ../cfg/level_small_platform.def
 
 ground_offset: 0,20
 ground_size: 1920,80
+ground_position: 0,1000
 
 platform_offset: 5,6
 platform_size: 270,31
 
-spo: 6,6
-sps: 31,31
+platform_0_position: 0,700
+platform_1_position: 300,700
+platform_2_position: 600,700
+platform_3_position: 900,700
+platform_4_position: 1200,700
+platform_5_position: 1100,700
+platform_6_position: 1300,700
+platform_7_position: 1500,700
+platform_8_position: 1700,700
+platform_9_position: 1900,700
+
+small_platform_offset: 6,6
+small_platform_size: 31,31
+
+player: ../cfg/player.def
+
+

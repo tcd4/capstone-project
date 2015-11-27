@@ -6,14 +6,19 @@
 #include "cmds.h"
 #include "sprite.h"
 #include "entity.h"
+#include "level.h"
 
 
 #define SYS_CONFIG	"../cfg/sys_config.def"
 
 
+Level	*_level;
+
+
 static uint8 			_game_over = 0;
 static Dict			*_sys_config = NULL;
 static SDL_GameController	*_controller;
+
 
 
 static void	Init_Systems();
@@ -121,6 +126,8 @@ void Loop()
     }  
     
     update_all_entities();
+    
+    draw_level( _level );
     draw_all_entities();
     
     Next_Frame();
@@ -130,26 +137,12 @@ void Loop()
 
 void game_start()
 {
-  Entity *new;
-  vec2_t s,p;
-  
-  new = create_entity();
-  if( !new )
+  _level = load_level( "../cfg/level.def" );
+  if( !_level )
   {
-    Log( FATAL, "fuck" );
+    Log( FATAL, "level didn't load" );
     exit( -1 );
   }
-  
-  add_draw_state( new, "../cfg/test_actor.def", NULL );
-  new->draw_state = 0;
-  new->visible = 1;
-  
-  Vec2_Set( s, 50, 50 );
-  Vec2_Set( p, 1000, 500 );
-  new->body = create_body( new, 1, s, p, NULL );
-  Vec2_Set( new->body->velocity, 10, 0 );
-  Vec2_Set( new->body->acceleration, -0.1, 0 );
-  add_ent_to_space( new );
   
   Log( TRACE, "Game Started" ); 
 }
@@ -170,9 +163,9 @@ void Exit_Systems()
   close_cmd_system();
   close_sprite_system();
   close_entity_system();
+  free_level( &_level );
   Close_2DGraphics();
   /* close audio */
-  SDL_Quit();
   Exit_Logging();
 }
 

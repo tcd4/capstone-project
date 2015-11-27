@@ -50,9 +50,10 @@ Body* create_body( struct entity_s *owner, uint32 group, vec2_t size, vec2_t pos
 /**
  * @brief frees a body
  * 
+ * @param space	the space the body is in
  * @param body	the body to free
  */
-void free_body( Body **body );
+void free_body( Space *space, Body **body );
 
 
 /**

@@ -5,3 +5,11 @@ die: ../cfg/player_die.def
 
 offset: 74,27
 size: 41,73
+
+spawn: 100,910
+scale: 1,1
+rotation: 0,0
+
+think_rate: 100
+
+gravity: 0,-.25

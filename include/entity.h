@@ -52,7 +52,7 @@ typedef struct entity_s
 	
 	struct body_s		*body;			/**< the entity's body in space */
 	vec2_t			position;		/**< position of the entity */
-	vec2_t			origin;			/**< center of the entity */
+	vec2_t			offset;			/**< center of the entity */
 	vec2_t			scale;			/**< scale of the entity */
 	vec2_t			rotation;		/**< rotation of the entity */
 	

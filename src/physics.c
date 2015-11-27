@@ -12,7 +12,7 @@ struct space_s
 
 static void _do_step( Space *space );
 static void _update_body( Space *space, Body *body );
-static void _check_for_collisions( Space *space, Body *body, double step_factor );
+static void _check_for_collisions( Space *space, Body *body, double *moved );
 
 
 Body* create_body( struct entity_s *owner, uint32 group, vec2_t size, vec2_t position, CollisionNotify collide )
@@ -37,7 +37,7 @@ Body* create_body( struct entity_s *owner, uint32 group, vec2_t size, vec2_t pos
 }
 
 
-void free_body( Body **body )
+void free_body( Space *space, Body **body )
 {
   Body *tmp;
   
@@ -45,6 +45,7 @@ void free_body( Body **body )
   if( !*body ) return;
 
   tmp = *body;
+  remove_body( space, tmp );
   free( tmp );
   *body = NULL;
 }
@@ -108,6 +109,7 @@ void _do_step( Space *space )
   for( iter = space->bodies; iter != NULL; iter = iter->next )
   {
     if( !iter->data ) continue;
+    
     _update_body( space, ( Body* )iter->data );
   }
 }
@@ -130,11 +132,11 @@ void _update_body( Space *space, Body *body )
   Vec2_Add( body->velocity, step_vector_accel, body->velocity );
   Vec2_Add( step_vector_vel, body->position, body->position );
   
-  _check_for_collisions( space, body, space->step_factor );
+  _check_for_collisions( space, body, step_vector_vel );
 }
 
 
-void _check_for_collisions( Space *space, Body *body, double step_factor )
+void _check_for_collisions( Space *space, Body *body, double *moved )
 {
   GSList *iter = NULL;
   Body *other;
@@ -149,12 +151,15 @@ void _check_for_collisions( Space *space, Body *body, double step_factor )
     if( other->group == body->group ) continue;
     
     if( rect_rect_collision( body->size, body->position, other->size, other->position ) )
-    {
+    {/*
+      Log( TRACE, "player px = %lf, py = %lf, w = %lf, h = %lf", body->position[ XA ], body->position[ YA ], body->size[ XA ], body->size[ YA ] );
+      Log( TRACE, "other px = %lf, py = %lf, w = %lf, h = %lf", other->position[ XA ], other->position[ YA ], other->size[ XA ], other->size[ YA ] );
+      */
       if( body->collide )
-	body->collide( body->owner, other->owner, step_factor );
+	body->collide( body->owner, other->owner, moved );
       
       if( other->collide )
-	other->collide( other->owner, body->owner, step_factor );
+	other->collide( other->owner, body->owner, moved );
     }
   }
 }

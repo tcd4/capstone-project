@@ -52,7 +52,8 @@ Entity* create_entity()
     {
       _ent_list[ i ].inuse = 1;
       _num_ents++;
-
+      _ent_list[ i ].self = &_ent_list[ i ];
+      
       return &_ent_list[ i ];
     }
     
@@ -81,7 +82,7 @@ void free_entity( Entity *ent )
     free( ent->name );
   
   if( ent->body )
-    free_body( &ent->body );
+    free_body( _ent_space, &ent->body );
   
   if( ent->Free )
     ent->Free( ent );  
@@ -106,14 +107,14 @@ void update_entity( Entity *ent )
   if( !ent || !ent->inuse ) return;
   
   if( ent->body )
+  {
     Vec2_Copy( ent->body->position, ent->position );
-  
-  if( ent->next_think <= Get_Time() )
+    Vec2_Subtract( ent->position, ent->offset, ent->position );
+  }
+  if( ( ent->think_rate ) && ( Get_Time() % ent->think_rate == 0 ) )
   {
     if( ent->Think )
       ent->Think( ent );
-    
-    ent->next_think = Get_Time() + ent->think_rate;
   }
 }
 
