@@ -2,8 +2,15 @@
 #include "level.h"
 
 
+#define EAB_ADDED 1
+#define ENEMY_MOVING 2
+#define ENEMY_ATTACKING 4
+#define ENEMY_SEARCHING 7
+
+
 extern vec2_t	gravity;
 
+static uint8	_enemy_flags = 0;
 static vec2_t	_move_speed;
 static vec2_t	_attack_box_offset;
 
@@ -17,6 +24,7 @@ void enemy_die_done( Entity *self );
 
 void create_eattack_box( Entity *owner, Dict *config );
 void update_eattack_box( Entity *owner, Entity *self );
+void eattack_box_think( Entity *self );
 
 
 void create_enemy( char *file, vec2_t spawn )
@@ -69,6 +77,7 @@ void create_enemy( char *file, vec2_t spawn )
   create_eattack_box( new, config );
   
   new->think_state = 1;
+  _enemy_flags |= ENEMY_SEARCHING;
   
   new->Think = enemy_think;
   new->Die = enemy_die;
@@ -77,18 +86,112 @@ void create_enemy( char *file, vec2_t spawn )
 
 void create_eattack_box( Entity *owner, Dict *config )
 {
+  Entity *new;
+  char name[ 16 ] = "enemy_attack_box";
+  vec2_t size;
+  
+  new = create_entity();
+  if( !new )
+  {
+    Log( ERROR, "couldn't make enemy attack entity" );
+    return;
+  }
+  
+  new->name = ( char* ) malloc( sizeof( char ) * 16 );
+  strncpy( new->name, name, 16 );
+  new->ent_type = ENT_ATTACK_BOX;
+  new->visible = 0;
+  
+  Str_As_Vec2( Find_In_Dict( config, "attack_box_offset" ), _attack_box_offset );
+  Str_As_Vec2( Find_In_Dict( config, "attack_box_size" ), size );
+  new->body = create_body( new, 3, size, owner->body->position, NULL );
+  
+  new->think_rate = 1;
+  new->think_state |= STATE_DUMB;
+  new->Think = eattack_box_think;
+  
+  owner->slaves = new;
+  new->owner = owner;
 }
 
 
 void enemy_think( Entity *self )
 {
-  if( ( self->ent_type != ENT_PLAYER ) || ( self->think_state & STATE_DEAD ) )
+  Entity *player;
+  vec2_t distance_between;
+  
+  if( ( self->ent_type != ENT_ENEMY ) || ( self->think_state & STATE_DEAD ) )
     return;
+  
+  player = get_player();
+  
+  if( _enemy_flags & ENEMY_SEARCHING )
+  {
+    Vec2_Subtract( self->body->position, player->body->position, distance_between );
+    
+    if( !( distance_between[ YA ] >= 50 || distance_between[ YA ] <= -50 ) )
+    {
+      if( distance_between[ XA ] <= 50 && distance_between[ XA ] >= 0 )
+      {
+	self->scale[ XA ] = -1;
+	_enemy_flags &= ~ENEMY_SEARCHING;
+	_enemy_flags |= ENEMY_ATTACKING;
+      }
+      else if( distance_between[ XA ] >= -50 && distance_between[ XA ] <= 0 )
+      {
+	self->scale[ XA ] = 1;
+	_enemy_flags &= ~ENEMY_SEARCHING;
+	_enemy_flags |= ENEMY_ATTACKING;
+      }
+      else if( distance_between[ XA ] <= 300 && distance_between[ XA ] > 0 )
+      {
+	self->body->velocity[ XA ] = -_move_speed[ XA ];
+	self->scale[ XA ] = 1;
+	
+	if( !self->draw_state == ENEMY_WALK )
+	  self->draw_state = ENEMY_WALK;
+      }
+      else if( distance_between[ XA ] >= -300 && distance_between[ XA ] < 0 )
+      {
+	self->body->velocity[ XA ] = _move_speed[ XA ];
+	self->scale[ XA ] = -1;
+	
+	if( !self->draw_state == ENEMY_WALK )
+	  self->draw_state = ENEMY_WALK;
+      }
+      else
+      {
+	self->body->velocity[ XA ] = 0;
+	self->draw_state = ENEMY_IDLE;
+      }
+    }
+    else
+    {
+      self->body->velocity[ XA ] = 0;
+      self->draw_state = ENEMY_IDLE;
+    }
+  }
+}
+
+
+void eattack_box_think( Entity *self )
+{
+  if( self->think_state & STATE_DUMB )
+    return;    
+  
+  if( !( _enemy_flags & EAB_ADDED ) && self->owner->actors[ ENEMY_ATTACK ]->frame >= 18 )
+  {
+    add_ent_to_space( self );
+    _enemy_flags |= EAB_ADDED;
+  }
+  update_eattack_box( self->owner, self );
 }
 
 
 void update_eattack_box( Entity *owner, Entity *self )
 {
+  Vec2_Copy( owner->body->position, self->body->position );
+  Vec2_Add( self->body->position, _attack_box_offset, self->body->position );
 }
 
 

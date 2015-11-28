@@ -17,5 +17,5 @@ gravity: 0,.1
 jump_speed: 0,5
 move_speed: 5,0
 
-attack_box_size: 50,50
+attack_box_size: 60,50
 attack_box_offset: 41,10
