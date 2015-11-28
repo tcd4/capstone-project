@@ -9,7 +9,7 @@
  */
 
 
-#define ENT_ENEMY 2
+
 
 
 #endif

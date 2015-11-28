@@ -44,6 +44,7 @@ typedef struct entity_s
 	
 	struct entity_s		*self;			/**< pointer to itself */
 	struct entity_s		*owner;			/**< pointer to the entity that owns this one */
+	struct entity_s		*slaves;		/**< entities an entity owns */
 	dataptr			custom;			/**< pointer to custom entity data */
 
 	struct actor_s		*actors[ MAX_ACTORS ];	/**< an array of actors for drawing */

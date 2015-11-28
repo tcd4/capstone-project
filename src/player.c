@@ -9,6 +9,7 @@ static uint8	_player_flags = 0;
 static vec2_t	_spawn;
 static vec2_t	_jump_speed;
 static vec2_t	_move_speed;
+static vec2_t	_attack_box_offset;
 
 
 void player_think( Entity *self );
@@ -27,6 +28,9 @@ void player_die_done( Entity *self );
 
 void turn_off_player_cmds();
 void turn_on_player_cmds();
+
+void create_attack_box( Entity *owner, Dict *config );
+void update_attack_box( Entity *owner, Entity *self );
 
 
 Entity* create_player( char *file )
@@ -107,7 +111,36 @@ Entity* create_player( char *file )
   if( !add_cmd( TRUE, "player_stop_left", SDL_CONTROLLERBUTTONUP, SDL_CONTROLLER_BUTTON_DPAD_LEFT, 0, player_stop, new ) )
     Log( ERROR, "failed to add player_stop_left cmd" );
   
+  create_attack_box( new, config );
+  
   return new;
+}
+
+
+void create_attack_box( Entity *owner, Dict *config )
+{
+  Entity *new;
+  char name[ 17 ] = "player_attack_box";
+  vec2_t size;
+  
+  new = create_entity();
+  if( !new )
+  {
+    Log( ERROR, "couldn't make player attack entity" );
+    return;
+  }
+  
+  new->name = ( char* ) malloc( sizeof( char ) * 17 );
+  strncpy( new->name, name, 17 );
+  new->ent_type = ENT_ATTACK_BOX;
+  new->visible = 0;
+  
+  Str_As_Vec2( Find_In_Dict( config, "attack_box_offset" ), _attack_box_offset );
+  Str_As_Vec2( Find_In_Dict( config, "attack_box_size" ), size );
+  new->body = create_body( new, PLAYER_GROUP, size, owner->body->position, NULL );
+  
+  owner->slaves = new;
+  new->owner = owner;
 }
 
 
@@ -115,6 +148,17 @@ void player_think( Entity *self )
 {
   if( ( self->ent_type != ENT_PLAYER ) || ( self->think_state & STATE_DEAD ) )
     return;
+  
+  /* update attack box when attacking */
+  if( self->draw_state == PLAYER_ATTACK )
+    update_attack_box( self, self->slaves );
+}
+
+
+void update_attack_box( Entity *owner, Entity *self )
+{
+  Vec2_Copy( owner->body->position, self->body->position );
+  Vec2_Add( self->body->position, _attack_box_offset, self->body->position );
 }
 
 
@@ -135,23 +179,35 @@ void player_touch( dataptr d1, dataptr d2, double *moved )
     }
     else
     {
-      /* stop when you collide below or to the side */
-      if( other->body->position[ YA ] <= self->body->position[ YA ] )
+      /* move back along the y-axis */
+      tmp[ YA ] = self->body->position[ YA ] - moved[ YA ];
+   
+      /* collide below */
+      if( tmp[ YA ] >= other->body->position[ YA ] + other->body->size[ YA ] )
       {
-	Vec2_Set( self->body->velocity, 0, 0 );
+	self->body->position[ YA ] = other->body->position[ YA ] + other->body->size[ YA ] + 5;
+	self->body->velocity[ YA ] = 0;
 	return;
       }
       
-      /* move back along the y-axis */
-      Vec2_Set( tmp, 0, moved[ YA ] );
-      Vec2_Subtract( self->body->position, tmp, self->body->position );
+      /* move back along the x-axis */
+      tmp[ XA ] = self->body->position[ XA ] - moved[ XA ];
       
-      if( other->body->position[ YA ] - self->body->size[ YA ] > self->body->position[ YA ] )
+      /* collide left */
+      if( tmp[ XA ] <= other->body->position[ XA ] )
       {
-	Vec2_Set( tmp, 0, moved[ YA ] );
-	Vec2_Add( self->body->position, tmp, self->body->position );
+	self->body->position[ XA ] = other->body->position[ XA ] - self->body->size[ XA ];
+	return;
       }
       
+      /* collide right */
+      if( tmp[ XA ] >= other->body->position[ XA ] + other->body->size[ XA ] )
+      {
+	self->body->position[ XA ] = other->body->position[ XA ] + other->body->size[ XA ] + 5;
+	return;
+      }
+      
+      /* collision on top */   
       /* ground the player */
       _player_flags |= PLAYER_GROUNDED;
 
@@ -164,6 +220,14 @@ void player_touch( dataptr d1, dataptr d2, double *moved )
       else if( self->draw_state == PLAYER_JUMP )
 	self->draw_state = PLAYER_IDLE;
     }
+  }
+  else if( other->ent_type == ENT_ENEMY )
+  {
+    self->Die( self );
+  }
+  else if( other->ent_type == ENT_ATTACK_BOX && other->owner != self )
+  {
+    self->Die( self );
   }
 }
 
@@ -244,7 +308,7 @@ void player_stop( dataptr d )
   
   reset_actor( self->actors[ PLAYER_WALK ] );
   
-  Vec2_Set( self->body->velocity, 0, 0 );
+  self->body->velocity[ XA ] = 0;
   
   if( self->draw_state == PLAYER_WALK )
     self->draw_state = PLAYER_IDLE;
@@ -256,10 +320,16 @@ void player_attack( dataptr d )
   Entity *self;
   
   self = ( Entity* )( d );
-  turn_off_player_cmds();
+  
   if( self->draw_state == PLAYER_ATTACK )
     return;
   
+  turn_off_cmd( "player_move_right" );
+  turn_off_cmd( "player_move_left" );
+  turn_off_cmd( "player_jump" );
+  turn_off_cmd( "player_attack" );
+  
+  update_attack_box( self, self->slaves );
   self->draw_state = PLAYER_ATTACK;
   
   if( _player_flags & PLAYER_GROUNDED )

@@ -17,6 +17,9 @@
 
 
 #define ENT_WORLD 0
+#define ENT_PLAYER 1
+#define ENT_ENEMY 2
+#define ENT_ATTACK_BOX 3
 
 
 typedef struct level_s

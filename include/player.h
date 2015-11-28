@@ -9,7 +9,6 @@
  */
 
 
-#define ENT_PLAYER 1
 #define PLAYER_GROUP 2
 
 
