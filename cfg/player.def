@@ -1,5 +1,6 @@
 idle: ../cfg/player_idle.def
 walk: ../cfg/player_walk.def
+jump: ../cfg/player_jump.def
 attack: ../cfg/player_attack.def
 die: ../cfg/player_die.def
 
@@ -7,9 +8,12 @@ offset: 74,27
 size: 41,73
 
 spawn: 100,910
-scale: 1,1
+scale: -1,1
 rotation: 0,0
 
 think_rate: 100
 
-gravity: 0,-.25
+gravity: 0,.1
+
+jump_speed: 0,8
+move_speed: 5,0

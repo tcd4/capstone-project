@@ -1,0 +1,6 @@
+sprite: ../cfg/player_sprite.def
+name: player_jump
+start: 1
+end: 1
+frame_rate: 5
+type: 0

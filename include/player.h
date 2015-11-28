@@ -22,6 +22,7 @@ enum
 {
   PLAYER_IDLE = 0,
   PLAYER_WALK,
+  PLAYER_JUMP,
   PLAYER_ATTACK,
   PLAYER_DIE,
 };
@@ -29,8 +30,10 @@ enum
 /**< player flags */
 enum
 {
-  GROUNDED = 0,
-  FLYING = 1
+  PLAYER_NONE = 0,
+  PLAYER_GROUNDED = 1,
+  PLAYER_FLYING = 2,
+  PLAYER_ATTACKING = 4
 };
 
 

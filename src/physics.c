@@ -131,7 +131,7 @@ void _update_body( Space *space, Body *body )
   Vec2_Add( step_vector_vel, step_vector_accel, step_vector_vel );
   Vec2_Add( body->velocity, step_vector_accel, body->velocity );
   Vec2_Add( step_vector_vel, body->position, body->position );
-  
+
   _check_for_collisions( space, body, step_vector_vel );
 }
 
@@ -151,10 +151,7 @@ void _check_for_collisions( Space *space, Body *body, double *moved )
     if( other->group == body->group ) continue;
     
     if( rect_rect_collision( body->size, body->position, other->size, other->position ) )
-    {/*
-      Log( TRACE, "player px = %lf, py = %lf, w = %lf, h = %lf", body->position[ XA ], body->position[ YA ], body->size[ XA ], body->size[ YA ] );
-      Log( TRACE, "other px = %lf, py = %lf, w = %lf, h = %lf", other->position[ XA ], other->position[ YA ], other->size[ XA ], other->size[ YA ] );
-      */
+    {
       if( body->collide )
 	body->collide( body->owner, other->owner, moved );
       

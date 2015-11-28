@@ -7,6 +7,8 @@ vec2_t	gravity;
 
 static uint8	_player_flags = 0;
 static vec2_t	_spawn;
+static vec2_t	_jump_speed;
+static vec2_t	_move_speed;
 
 
 void player_think( Entity *self );
@@ -52,6 +54,7 @@ Entity* create_player( char *file )
   new->draw_state = PLAYER_IDLE;
   add_draw_state( new, Find_In_Dict( config, "idle" ), NULL );
   add_draw_state( new, Find_In_Dict( config, "walk" ), NULL );
+  add_draw_state( new, Find_In_Dict( config, "jump" ), NULL );
   add_draw_state( new, Find_In_Dict( config, "attack" ), player_attack_done );
   add_draw_state( new, Find_In_Dict( config, "die" ), player_die_done );
   
@@ -62,6 +65,8 @@ Entity* create_player( char *file )
   Str_As_Vec2( Find_In_Dict( config, "spawn" ), _spawn );
   Str_As_Vec2( Find_In_Dict( config, "size" ), size );
   Str_As_Vec2( Find_In_Dict( config, "offset" ), offset );
+  Str_As_Vec2( Find_In_Dict( config, "jump_speed" ), _jump_speed );
+  Str_As_Vec2( Find_In_Dict( config, "move_speed" ), _move_speed );
   
   Vec2_Copy( _spawn, pos );
   Vec2_Add( pos, offset, pos );
@@ -72,7 +77,8 @@ Entity* create_player( char *file )
   Vec2_Copy( _spawn, new->position );
   Vec2_Copy( offset, new->offset );
   Vec2_Copy( gravity, new->body->acceleration );
-  
+  _player_flags |= PLAYER_GROUNDED;
+
   Str_As_UInt( Find_In_Dict( config, "think_rate" ), &new->think_rate );
 
   new->Think = player_think;
@@ -105,14 +111,48 @@ void player_think( Entity *self )
 void player_touch( dataptr d1, dataptr d2, double *moved )
 {
   Entity *self, *other;
+  vec2_t tmp;
   
   self = ( Entity* )( d1 );
   other = ( Entity* )( d2 );
   
-  Vec2_Subtract( self->body->position, moved, self->body->position );
-  
   if( other->ent_type == ENT_WORLD )
-    return;
+  {
+    if( _player_flags & PLAYER_GROUNDED )
+    {
+      Vec2_Set( tmp, 0, moved[ YA ] );
+      Vec2_Subtract( self->body->position, tmp, self->body->position );
+    }
+    else
+    {
+      /* stop when you collide below or to the side */
+      if( other->body->position[ YA ] <= self->body->position[ YA ] )
+      {
+	Vec2_Set( self->body->velocity, 0, 0 );
+	return;
+      }
+      
+      /* move back along the y-axis */
+      Vec2_Set( tmp, 0, moved[ YA ] );
+      Vec2_Subtract( self->body->position, tmp, self->body->position );
+      
+      if( other->body->position[ YA ] - self->body->size[ YA ] > self->body->position[ YA ] )
+      {
+	Vec2_Set( tmp, 0, moved[ YA ] );
+	Vec2_Add( self->body->position, tmp, self->body->position );
+      }
+      
+      /* ground the player */
+      _player_flags |= PLAYER_GROUNDED;
+      
+      /* stop moving */
+      Vec2_Set( self->body->velocity, 0, 0 );
+
+      /* set animation state */
+      if( self->draw_state == PLAYER_JUMP )
+	self->draw_state = PLAYER_IDLE;
+    }
+  }
 }
 
 
@@ -128,16 +168,51 @@ void player_free( Entity *self )
 
 void player_jump( dataptr d )
 {
+  Entity *self;
+  
+  self = ( Entity* )( d );
+  
+  /* no double jumps */
+  if( self->draw_state == PLAYER_JUMP )
+    return;
+  
+  _player_flags &= ~PLAYER_GROUNDED;
+  self->draw_state = PLAYER_JUMP;
+  
+  Vec2_Subtract(  self->body->velocity, _jump_speed, self->body->velocity );
+  Vec2_Set( self->body->position, self->body->position[ XA ], self->body->position[ YA ] - 10 ); 
 }
 
 
 void player_move_right( dataptr d )
 {
+  Entity *self;
+  
+  self = ( Entity* )( d );
+  
+  if( self->draw_state == PLAYER_JUMP )
+    return;
+  
+  Vec2_Copy( _move_speed, self->body->velocity );
+  Vec2_Set( self->scale, -1, 1 );
+  
+  self->draw_state = PLAYER_WALK;
 }
 
 
 void player_move_left( dataptr d )
 {
+  Entity *self;
+  
+  self = ( Entity* )( d );
+  
+  if( self->draw_state == PLAYER_JUMP )
+    return;
+  
+  Vec2_Set( self->body->velocity, -_move_speed[ XA ], _move_speed[ YA ] );
+  Vec2_Set( self->scale, 1, 1 );
+  
+  self->draw_state = PLAYER_WALK;
 }
 
 

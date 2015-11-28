@@ -2,5 +2,5 @@ sprite: ../cfg/player_sprite.def
 name: player_die
 start: 24
 end: 32
-frame_rate: 5
+frame_rate: 3
 type: 1

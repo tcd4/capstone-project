@@ -49,8 +49,8 @@ Actor* create_actor( struct entity_s *owner, char *file, void ( *Finished )( str
 void draw_actor( Actor *actor )
 {
   if( !actor ) return;
-  
-  draw_sprite( actor->sprite, actor->owner->position, actor->owner->position, actor->owner->position, actor->frame );
+
+  draw_sprite( actor->sprite, actor->owner->position, actor->owner->scale, actor->owner->rotation, actor->frame );
   
   /* make sure to only update with the frame rate */
   if( Get_Frame() % actor->frame_rate ) return;

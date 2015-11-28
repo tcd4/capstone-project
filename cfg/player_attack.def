@@ -2,6 +2,6 @@ sprite: ../cfg/player_sprite.def
 name: player_attack
 start: 8
 end: 22
-frame_rate: 5
+frame_rate: 3
 type: 1
 

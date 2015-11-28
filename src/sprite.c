@@ -171,13 +171,19 @@ Sprite* load_sprite( char *image_file, uint32 cols, uint32 rows, uint32 frames, 
 void draw_sprite( Sprite *sprite, vec2_t position, vec2_t scale, vec2_t rotation, uint32 frame )
 {
   SDL_Rect cell, target;
+  SDL_RendererFlip flip;
   
   if( !sprite ) return;
   
   set_rect( &cell, frame % sprite->num_cols * sprite->frame_w, frame / sprite->num_cols * sprite->frame_h, sprite->frame_w, sprite->frame_h );
   set_rect( &target, position[ 0 ], position[ 1 ], sprite->frame_w, sprite->frame_h );
   
-  SDL_RenderCopyEx( Get_Renderer(), sprite->texture, &cell, &target, 0, NULL, SDL_FLIP_NONE );
+  if( scale[ XA ] >= 0 )
+    flip = SDL_FLIP_NONE;
+  else
+    flip = SDL_FLIP_HORIZONTAL;
+  
+  SDL_RenderCopyEx( Get_Renderer(), sprite->texture, &cell, &target, 0, NULL, flip );
 }
 
 
