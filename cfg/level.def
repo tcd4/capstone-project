@@ -3,8 +3,8 @@ ground: ../cfg/level_ground.def
 platform: ../cfg/level_platform.def
 small_platform: ../cfg/level_small_platform.def
 
-ground_offset: 0,20
-ground_size: 1920,80
+ground_offset: 0,23
+ground_size: 1920,77
 ground_position: 0,1000
 
 platform_offset: 5,6

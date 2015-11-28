@@ -4,7 +4,7 @@ log_file: ../cfg/logs.txt
 
 resolution: 1920,1080
 render_resolution: 1920,1080
-background_color: 0,0,0,255
+background_color: 255,255,255,255
 bpp: 32
 fullscreen: 1
 borderless: 1

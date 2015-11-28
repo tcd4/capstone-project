@@ -71,7 +71,7 @@ void Init_2DGraphics( Dict *config )
     exit( -1 );
   }
   
-  SDL_SetRenderDrawColor( _renderer, _background_color_v[ 0 ], _background_color_v[ 1 ], _background_color_v[ 2 ], _background_color_v[ 3 ] );
+  SDL_SetRenderDrawColor( _renderer, 0, 0, 0, 255 );
   SDL_RenderClear( _renderer );
   SDL_RenderPresent( _renderer );
   SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "linear" );

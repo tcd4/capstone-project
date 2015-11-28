@@ -130,7 +130,7 @@ Sprite* load_sprite( char *image_file, uint32 cols, uint32 rows, uint32 frames, 
       if( _sprite_list[ i ].texture )
       {
 	SDL_SetTextureBlendMode( _sprite_list[ i ].texture, SDL_BLENDMODE_BLEND );        
-	SDL_UpdateTexture( _sprite_list[ i ].texture, NULL, _sprite_list[ i ].image->pixels, _sprite_list[ i ].image->pitch);
+	/*SDL_UpdateTexture( _sprite_list[ i ].texture, NULL, _sprite_list[ i ].image->pixels, _sprite_list[ i ].image->pitch);*/
       }
       else
       {
