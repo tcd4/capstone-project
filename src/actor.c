@@ -52,18 +52,18 @@ void draw_actor( Actor *actor )
 
   draw_sprite( actor->sprite, actor->owner->position, actor->owner->scale, actor->owner->rotation, actor->frame );
   
-  /* make sure to only update with the frame rate */
-  if( Get_Frame() % actor->frame_rate ) return;
-  
-  if( actor->type == ANIM_NO ) return;
-  
   /* call the finished function if the animation is over */
   if( ( actor->frame == actor->end ) && ( actor->Finished ) && ( !actor->done ) )
   {
-    actor->Finished( actor->owner );
     actor->done = 1;
+    actor->Finished( actor->owner );
   }
-    
+  
+  if( actor->type == ANIM_NO ) return;
+  
+  /* make sure to only update with the frame rate */
+  if( Get_Frame() % actor->frame_rate ) return;
+  
   /* update the frame */
   actor->frame += actor->direction;
   

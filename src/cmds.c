@@ -84,8 +84,8 @@ void turn_on_cmd( char *name )
   Cmd *tmp;
   
   tmp = _find_cmd_by_name( name );
-  if( !tmp ) return;
-  tmp->inuse = 1;
+  if( tmp )
+    tmp->inuse = 1;
 }
 
 
@@ -94,8 +94,8 @@ void turn_off_cmd( char *name )
   Cmd *tmp;
   
   tmp = _find_cmd_by_name( name );
-  if( !tmp ) return;
-  tmp->inuse = 0;
+  if( tmp )
+    tmp->inuse = 0;
 }
 
 

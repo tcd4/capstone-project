@@ -131,6 +131,17 @@ void _update_body( Space *space, Body *body )
   Vec2_Add( step_vector_vel, step_vector_accel, step_vector_vel );
   Vec2_Add( body->velocity, step_vector_accel, body->velocity );
   Vec2_Add( step_vector_vel, body->position, body->position );
+  
+  /* nothing leaves the screen */
+  if( body->position[ XA ] < 0 )
+    body->position[ XA ] = 0;
+  else if( body->position[ XA ] + body->size[ XA ] > 1920 )
+    body->position[ XA ] = 1920 - body->size[ XA ];
+  
+  if( body->position[ YA ] < 0 )
+    body->position[ YA ] = 0;
+  else if( body->position[ YA ] + body->size[ YA ] > 1080 )
+    body->position[ YA ] = 1080 - body->size[ YA ];
 
   _check_for_collisions( space, body, step_vector_vel );
 }

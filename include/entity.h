@@ -125,9 +125,9 @@ void draw_all_entities();
 /**
  * @brief adds a draw new draw state to the entity
  * 
- * @param ent	the entity to add to
- * 
- * 
+ * @param ent		the entity to add to
+ * @param file		the def file to load from
+ * @param Finished	the function to call when the animation is finished
  * 
  * @return TRUE if successful, FALSE if else
  */
@@ -141,6 +141,13 @@ uint8 add_draw_state( Entity *ent, char *file, void ( *Finished )( struct entity
  * @return TRUE on success, FALSE on failure
  */
 uint8 add_ent_to_space( Entity *ent );
+
+/**
+ * @brief removes an entity to the entity physics space
+ * 
+ * @param ent	the entity to remove
+ */
+void remove_ent_from_space( Entity *ent );
 
 
 #endif

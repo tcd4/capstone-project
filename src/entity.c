@@ -189,4 +189,13 @@ uint8 add_ent_to_space( Entity *ent )
 }
 
 
+void remove_ent_from_space( Entity *ent )
+{
+  if( !ent || !ent->body )
+    return;
+  
+  remove_body( _ent_space, ent->body );
+}
+
+
 /* eof */

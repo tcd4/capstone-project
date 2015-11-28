@@ -19,10 +19,14 @@ void player_free( Entity *self );
 void player_jump( dataptr d );
 void player_move_right( dataptr d );
 void player_move_left( dataptr d );
+void player_stop( dataptr d );
 void player_attack( dataptr d );
 
 void player_attack_done( Entity *self );
 void player_die_done( Entity *self );
+
+void turn_off_player_cmds();
+void turn_on_player_cmds();
 
 
 Entity* create_player( char *file )
@@ -97,6 +101,12 @@ Entity* create_player( char *file )
   if( !add_cmd( TRUE, "player_attack", SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLER_BUTTON_X, 0, player_attack, new ) )
     Log( ERROR, "failed to add player_attack cmd" );
   
+  if( !add_cmd( TRUE, "player_stop_right", SDL_CONTROLLERBUTTONUP, SDL_CONTROLLER_BUTTON_DPAD_RIGHT, 0, player_stop, new ) )
+    Log( ERROR, "failed to add player_stop_right cmd" );
+  
+  if( !add_cmd( TRUE, "player_stop_left", SDL_CONTROLLERBUTTONUP, SDL_CONTROLLER_BUTTON_DPAD_LEFT, 0, player_stop, new ) )
+    Log( ERROR, "failed to add player_stop_left cmd" );
+  
   return new;
 }
 
@@ -144,12 +154,14 @@ void player_touch( dataptr d1, dataptr d2, double *moved )
       
       /* ground the player */
       _player_flags |= PLAYER_GROUNDED;
-      
-      /* stop moving */
-      Vec2_Set( self->body->velocity, 0, 0 );
 
-      /* set animation state */
-      if( self->draw_state == PLAYER_JUMP )
+      /* set animation state */      
+      if( self->body->velocity[ XA ] )
+      {
+	reset_actor( self->actors[ PLAYER_WALK ] );
+	self->draw_state = PLAYER_WALK;
+      }
+      else if( self->draw_state == PLAYER_JUMP )
 	self->draw_state = PLAYER_IDLE;
     }
   }
@@ -158,11 +170,20 @@ void player_touch( dataptr d1, dataptr d2, double *moved )
 
 void player_die( Entity *self )
 {
+  self->think_state |= STATE_DEAD;
+  turn_off_player_cmds();
+  remove_ent_from_space( self );
 }
 
 
 void player_free( Entity *self )
 {
+  remove_cmd_by_name( "player_move_right" );
+  remove_cmd_by_name( "player_move_left" );
+  remove_cmd_by_name( "player_jump" );
+  remove_cmd_by_name( "player_attack" );
+  remove_cmd_by_name( "player_stop_right" );
+  remove_cmd_by_name( "player_stop_left" );
 }
 
 
@@ -172,15 +193,14 @@ void player_jump( dataptr d )
   
   self = ( Entity* )( d );
   
-  /* no double jumps */
   if( self->draw_state == PLAYER_JUMP )
     return;
-  
+
   _player_flags &= ~PLAYER_GROUNDED;
   self->draw_state = PLAYER_JUMP;
   
-  Vec2_Subtract(  self->body->velocity, _jump_speed, self->body->velocity );
-  Vec2_Set( self->body->position, self->body->position[ XA ], self->body->position[ YA ] - 10 ); 
+  self->body->velocity[ YA ] = -_jump_speed[ YA ];
+  self->body->position[ YA ] -= 5;
 }
 
 
@@ -189,11 +209,11 @@ void player_move_right( dataptr d )
   Entity *self;
   
   self = ( Entity* )( d );
-  
-  if( self->draw_state == PLAYER_JUMP )
+
+  if( self->draw_state == PLAYER_JUMP || self->draw_state == PLAYER_ATTACK )
     return;
   
-  Vec2_Copy( _move_speed, self->body->velocity );
+  self->body->velocity[ XA ] = _move_speed[ XA ];
   Vec2_Set( self->scale, -1, 1 );
   
   self->draw_state = PLAYER_WALK;
@@ -205,29 +225,88 @@ void player_move_left( dataptr d )
   Entity *self;
   
   self = ( Entity* )( d );
-  
-  if( self->draw_state == PLAYER_JUMP )
+
+  if( self->draw_state == PLAYER_JUMP || self->draw_state == PLAYER_ATTACK )
     return;
   
-  Vec2_Set( self->body->velocity, -_move_speed[ XA ], _move_speed[ YA ] );
+  self->body->velocity[ XA ] = -_move_speed[ XA ];
   Vec2_Set( self->scale, 1, 1 );
   
   self->draw_state = PLAYER_WALK;
 }
 
 
+void player_stop( dataptr d )
+{
+  Entity *self;
+  
+  self = ( Entity* )( d );
+  
+  reset_actor( self->actors[ PLAYER_WALK ] );
+  
+  Vec2_Set( self->body->velocity, 0, 0 );
+  
+  if( self->draw_state == PLAYER_WALK )
+    self->draw_state = PLAYER_IDLE;
+}
+
+
 void player_attack( dataptr d )
 {
+  Entity *self;
+  
+  self = ( Entity* )( d );
+  turn_off_player_cmds();
+  if( self->draw_state == PLAYER_ATTACK )
+    return;
+  
+  self->draw_state = PLAYER_ATTACK;
+  
+  if( _player_flags & PLAYER_GROUNDED )
+    Vec2_Set( self->body->velocity, 0, 0 );
 }
 
 
 void player_attack_done( Entity *self )
 {
+  self->draw_state = PLAYER_IDLE;
+  if( _player_flags & PLAYER_GROUNDED )
+    self->draw_state = PLAYER_IDLE;
+  else
+    self->draw_state = PLAYER_JUMP;
+  
+  reset_actor( self->actors[ PLAYER_ATTACK ] );
+  turn_on_player_cmds();
 }
 
 
 void player_die_done( Entity *self )
 {
+  self->visible = 0;
+  reset_actor( self->actors[ PLAYER_DIE ] );
+  self->draw_state = PLAYER_IDLE;
+}
+
+
+void turn_off_player_cmds()
+{
+  turn_off_cmd( "player_move_right" );
+  turn_off_cmd( "player_move_left" );
+  turn_off_cmd( "player_jump" );
+  turn_off_cmd( "player_attack" );
+  turn_off_cmd( "player_stop_right" );
+  turn_off_cmd( "player_stop_left" );
+}
+
+
+void turn_on_player_cmds()
+{
+  turn_on_cmd( "player_move_right" );
+  turn_on_cmd( "player_move_left" );
+  turn_on_cmd( "player_jump" );
+  turn_on_cmd( "player_attack" );
+  turn_on_cmd( "player_stop_right" );
+  turn_on_cmd( "player_stop_left" );
 }
 
 
