@@ -5,3 +5,13 @@ die: ../cfg/enemy_die.def
 
 offset: 26,25
 size: 43,65
+
+scale: -1,1
+rotation: 0,0
+
+think_rate: 50
+
+move_speed: 5,0
+
+attack_box_size: 50,50
+attack_box_offset: 43,8

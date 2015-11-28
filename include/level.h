@@ -14,6 +14,7 @@
 
 #include "entity.h"
 #include "player.h"
+#include "enemy.h"
 
 
 #define ENT_WORLD 0

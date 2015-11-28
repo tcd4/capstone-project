@@ -26,4 +26,6 @@ small_platform_size: 31,31
 
 player: ../cfg/player.def
 
+enemy: ../cfg/enemy.def
+enemy1_spawn: 600,900
 

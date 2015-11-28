@@ -14,7 +14,6 @@ rotation: 0,0
 think_rate: 50
 
 gravity: 0,.1
-
 jump_speed: 0,5
 move_speed: 5,0
 

@@ -31,6 +31,7 @@ void turn_on_player_cmds();
 
 void create_attack_box( Entity *owner, Dict *config );
 void update_attack_box( Entity *owner, Entity *self );
+void attack_box_think( Entity *self );
 
 
 Entity* create_player( char *file )
@@ -139,6 +140,10 @@ void create_attack_box( Entity *owner, Dict *config )
   Str_As_Vec2( Find_In_Dict( config, "attack_box_size" ), size );
   new->body = create_body( new, PLAYER_GROUP, size, owner->body->position, NULL );
   
+  new->think_rate = 1;
+  new->think_state |= STATE_DUMB;
+  new->Think = attack_box_think;
+  
   owner->slaves = new;
   new->owner = owner;
 }
@@ -147,11 +152,21 @@ void create_attack_box( Entity *owner, Dict *config )
 void player_think( Entity *self )
 {
   if( ( self->ent_type != ENT_PLAYER ) || ( self->think_state & STATE_DEAD ) )
-    return;
+    return;    
+}
+
+
+void attack_box_think( Entity *self )
+{
+  if( self->think_state & STATE_DUMB )
+    return;    
   
-  /* update attack box when attacking */
-  if( self->draw_state == PLAYER_ATTACK )
-    update_attack_box( self, self->slaves );
+  if( !( _player_flags & PLAYER_AB_ADDED ) && self->owner->actors[ PLAYER_ATTACK ]->frame >= 18 )
+  {
+    add_ent_to_space( self );
+    _player_flags |= PLAYER_AB_ADDED;
+  }
+  update_attack_box( self->owner, self );
 }
 
 
@@ -208,6 +223,9 @@ void player_touch( dataptr d1, dataptr d2, double *moved )
       }
       
       /* collision on top */   
+      self->body->position[ YA ] = tmp[ YA ];
+      self->body->velocity[ YA ] = 0;
+      
       /* ground the player */
       _player_flags |= PLAYER_GROUNDED;
 
@@ -234,6 +252,10 @@ void player_touch( dataptr d1, dataptr d2, double *moved )
 
 void player_die( Entity *self )
 {
+  if( self->draw_state == PLAYER_ATTACK )
+    player_attack_done( self );
+  
+  self->draw_state = PLAYER_DIE;
   self->think_state |= STATE_DEAD;
   turn_off_player_cmds();
   remove_ent_from_space( self );
@@ -329,7 +351,7 @@ void player_attack( dataptr d )
   turn_off_cmd( "player_jump" );
   turn_off_cmd( "player_attack" );
   
-  update_attack_box( self, self->slaves );
+  self->slaves->think_state = STATE_ALIVE;
   self->draw_state = PLAYER_ATTACK;
   
   if( _player_flags & PLAYER_GROUNDED )
@@ -346,6 +368,9 @@ void player_attack_done( Entity *self )
     self->draw_state = PLAYER_JUMP;
   
   reset_actor( self->actors[ PLAYER_ATTACK ] );
+  self->slaves->think_state = STATE_DUMB;
+  remove_ent_from_space( self->slaves );
+  _player_flags &= ~PLAYER_AB_ADDED;
   turn_on_player_cmds();
 }
 

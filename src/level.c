@@ -94,7 +94,9 @@ Level* load_level( char *file )
   /* load player */
   _player = create_player( Find_In_Dict( config, "player" ) );
   
-  /* load enemy */
+  /* load enemies */
+  Str_As_Vec2( Find_In_Dict( config, "enemy1_spawn" ), pos );
+  create_enemy( Find_In_Dict( config, "enemy" ), pos );
   
   return level;
 }
