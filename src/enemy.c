@@ -3,16 +3,19 @@
 
 
 #define EAB_ADDED 1
-#define ENEMY_MOVING 2
-#define ENEMY_ATTACKING 4
-#define ENEMY_SEARCHING 7
 
+enum
+{
+  ENEMY_SEARCHING = 0,
+  ENEMY_CHARGING,
+  ENEMY_ATTACKING
+};
 
 extern vec2_t	gravity;
 
-static uint8	_enemy_flags = 0;
 static vec2_t	_move_speed;
 static vec2_t	_attack_box_offset;
+static uint8	_ab_added = 0;
 
 
 void enemy_think( Entity *self );
@@ -56,7 +59,6 @@ void create_enemy( char *file, vec2_t spawn )
   new->draw_state = ENEMY_IDLE;
   add_draw_state( new, Find_In_Dict( config, "idle" ), NULL );
   add_draw_state( new, Find_In_Dict( config, "walk" ), NULL );
-  add_draw_state( new, Find_In_Dict( config, "jump" ), NULL );
   add_draw_state( new, Find_In_Dict( config, "attack" ), enemy_attack_done );
   add_draw_state( new, Find_In_Dict( config, "die" ), enemy_die_done );
   
@@ -77,7 +79,7 @@ void create_enemy( char *file, vec2_t spawn )
   create_eattack_box( new, config );
   
   new->think_state = 1;
-  _enemy_flags |= ENEMY_SEARCHING;
+  new->flags |= ENEMY_SEARCHING;
   
   new->Think = enemy_think;
   new->Die = enemy_die;
@@ -118,58 +120,77 @@ void create_eattack_box( Entity *owner, Dict *config )
 void enemy_think( Entity *self )
 {
   Entity *player;
-  vec2_t distance_between;
+  vec2_t distance_between_l, distance_between_r;
   
   if( ( self->ent_type != ENT_ENEMY ) || ( self->think_state & STATE_DEAD ) )
     return;
   
   player = get_player();
-  
-  if( _enemy_flags & ENEMY_SEARCHING )
+  if( player->think_state == STATE_DEAD )
   {
-    Vec2_Subtract( self->body->position, player->body->position, distance_between );
-    
-    if( !( distance_between[ YA ] >= 50 || distance_between[ YA ] <= -50 ) )
-    {
-      if( distance_between[ XA ] <= 50 && distance_between[ XA ] >= 0 )
-      {
-	self->scale[ XA ] = -1;
-	_enemy_flags &= ~ENEMY_SEARCHING;
-	_enemy_flags |= ENEMY_ATTACKING;
-      }
-      else if( distance_between[ XA ] >= -50 && distance_between[ XA ] <= 0 )
-      {
-	self->scale[ XA ] = 1;
-	_enemy_flags &= ~ENEMY_SEARCHING;
-	_enemy_flags |= ENEMY_ATTACKING;
-      }
-      else if( distance_between[ XA ] <= 300 && distance_between[ XA ] > 0 )
-      {
-	self->body->velocity[ XA ] = -_move_speed[ XA ];
-	self->scale[ XA ] = 1;
-	
-	if( !self->draw_state == ENEMY_WALK )
-	  self->draw_state = ENEMY_WALK;
-      }
-      else if( distance_between[ XA ] >= -300 && distance_between[ XA ] < 0 )
-      {
-	self->body->velocity[ XA ] = _move_speed[ XA ];
-	self->scale[ XA ] = -1;
-	
-	if( !self->draw_state == ENEMY_WALK )
-	  self->draw_state = ENEMY_WALK;
-      }
-      else
-      {
-	self->body->velocity[ XA ] = 0;
-	self->draw_state = ENEMY_IDLE;
-      }
-    }
-    else
-    {
-      self->body->velocity[ XA ] = 0;
+    self->body->velocity[ XA ] = 0;
+    return;
+  }
+  
+  Vec2_Set( distance_between_l, self->body->position[ XA ] - ( player->body->position[ XA ] + player->body->size[ XA ] ), self->body->position[ YA ] - player->body->position[ YA ]  );
+  Vec2_Set( distance_between_r, self->body->position[ XA ] + self->body->size[ XA ] - player->body->position[ XA ], self->body->position[ YA ] );
+  
+  switch( self->flags )
+  {
+    case ENEMY_SEARCHING:
       self->draw_state = ENEMY_IDLE;
-    }
+      self->body->velocity[ XA ] = 0;
+      
+      if( ( ( distance_between_l[ YA ] >= ARGO_HEIGHT ) || ( distance_between_l[ YA ] <= -ARGO_HEIGHT ) ) || \
+	( ( distance_between_l[ XA ] >= ARGO_DISTANCE ) || ( distance_between_r[ XA ] <= -ARGO_DISTANCE ) ) )
+	return;
+      
+      if( distance_between_l[ XA ] < 0 )
+	self->scale[ XA ] = -1;
+      else
+	self->scale[ XA ] = 1;
+      
+      self->flags = ENEMY_CHARGING;
+      break;
+      
+    case ENEMY_CHARGING:      
+      self->draw_state = ENEMY_WALK;
+      
+      if( ( ( distance_between_l[ YA ] >= ARGO_HEIGHT ) || ( distance_between_l[ YA ] <= -ARGO_HEIGHT ) ) || \
+	( ( distance_between_l[ XA ] >= ARGO_DISTANCE ) || ( distance_between_r[ XA ] <= -ARGO_DISTANCE ) ) )
+      {
+	self->flags = ENEMY_SEARCHING;
+	reset_actor( self->actors[ ENEMY_WALK ] );
+      }
+      
+      if( ( ( distance_between_l[ XA ] <= ATTACK_DISTANCE ) && ( distance_between_l[ XA ] > 0 ) ) || \
+	( ( distance_between_r[ XA ] >= -ATTACK_DISTANCE ) && ( distance_between_r[ XA ] < 0 ) ) )
+      {
+	self->flags = ENEMY_ATTACKING;
+	reset_actor( self->actors[ ENEMY_WALK ] );
+	return;
+      }
+      
+      if( distance_between_l[ XA ] < 0 )
+	self->body->velocity[ XA ] = _move_speed[ XA ];
+      else
+	self->body->velocity[ XA ] = -_move_speed[ XA ];
+           
+      break;
+      
+    case ENEMY_ATTACKING:     
+      self->draw_state = ENEMY_ATTACK;
+      self->slaves->think_state &= ~STATE_DUMB;
+      self->body->velocity[ XA ] = 0; 
+      
+      if( ( ( distance_between_l[ YA ] >= ARGO_HEIGHT ) || ( distance_between_l[ YA ] <= -ARGO_HEIGHT ) ) || \
+	( ( distance_between_l[ XA ] >= ARGO_DISTANCE ) || ( distance_between_r[ XA ] <= -ARGO_DISTANCE ) ) )
+      {
+	self->flags = ENEMY_SEARCHING;
+	reset_actor( self->actors[ ENEMY_WALK ] );
+      }
+      
+      break;
   }
 }
 
@@ -179,19 +200,23 @@ void eattack_box_think( Entity *self )
   if( self->think_state & STATE_DUMB )
     return;    
   
-  if( !( _enemy_flags & EAB_ADDED ) && self->owner->actors[ ENEMY_ATTACK ]->frame >= 18 )
+  if( !( _ab_added & EAB_ADDED ) && self->owner->actors[ ENEMY_ATTACK ]->frame >= 10 )
   {
     add_ent_to_space( self );
-    _enemy_flags |= EAB_ADDED;
+    _ab_added = EAB_ADDED;
   }
   update_eattack_box( self->owner, self );
 }
 
 
 void update_eattack_box( Entity *owner, Entity *self )
-{
-  Vec2_Copy( owner->body->position, self->body->position );
-  Vec2_Add( self->body->position, _attack_box_offset, self->body->position );
+{  
+  if( owner->scale[ XA ] < 0 )
+    self->body->position[ XA ] = owner->body->position[ XA ] + owner->body->size[ XA ] + _attack_box_offset[ XA ];
+  else
+    self->body->position[ XA ] = owner->body->position[ XA ] - _attack_box_offset[ XA ] - self->body->size[ XA ];
+  
+  self->body->position[ YA ] = owner->body->position[ YA ] + _attack_box_offset[ YA ];
 }
 
 
@@ -236,15 +261,6 @@ void enemy_touch( dataptr d1, dataptr d2, double *moved )
     /* collision on top */   
     self->body->position[ YA ] = tmp[ YA ];
     self->body->velocity[ YA ] = 0;
-    
-    /* set animation state */      
-    if( self->body->velocity[ XA ] )
-    {
-      reset_actor( self->actors[ ENEMY_WALK ] );
-      self->draw_state = ENEMY_WALK;
-    }
-    else
-      self->draw_state = ENEMY_IDLE;
   }
   else if( other->ent_type == ENT_PLAYER )
   {
@@ -270,6 +286,15 @@ void enemy_die( Entity *self )
 
 void enemy_attack_done( Entity *self )
 {
+  reset_actor( self->actors[ ENEMY_ATTACK ] );
+  self->flags = ENEMY_SEARCHING;
+  
+  self->slaves->think_state |= STATE_DUMB;
+  remove_ent_from_space( self->slaves );
+  _ab_added &= ~EAB_ADDED;
+  
+  if( get_player()->think_state == STATE_DEAD )
+    self->draw_state = ENEMY_IDLE;
 }
 
 

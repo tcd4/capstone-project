@@ -57,6 +57,7 @@ typedef struct entity_s
 	vec2_t			scale;			/**< scale of the entity */
 	vec2_t			rotation;		/**< rotation of the entity */
 	
+	uint32			flags;
 	uint16			think_state;		/**< the state of the for thinking entity */
 	Uint32			think_rate;		/**< determines how often the entity thinks */
 	Uint32			next_think;		/**< determines when the entity will think next */

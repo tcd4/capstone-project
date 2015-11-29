@@ -10,19 +10,26 @@ ground_position: 0,1000
 platform_offset: 5,6
 platform_size: 270,31
 
-platform_0_position: 100,900
-platform_1_position: 300,700
-platform_2_position: 600,700
-platform_3_position: 900,700
-platform_4_position: 1200,700
-platform_5_position: 1100,700
-platform_6_position: 1300,700
-platform_7_position: 1500,850
-platform_8_position: 1700,700
-platform_9_position: 1900,700
+platform_0_position: 386,786
+platform_1_position: 680,600
+platform_2_position: 700,888
+platform_3_position: 800,450
+platform_4_position: 1100,714
+platform_5_position: 1125,250
+platform_6_position: 1400,923
+platform_7_position: 1400,400
+platform_8_position: 1525,100
+platform_9_position: 1650,550
 
-small_platform_offset: 6,6
+small_platform_offset: 0,6
 small_platform_size: 31,31
+
+small_platform_0: 1025,790
+small_platform_1: 1435,800
+small_platform_2: 1560,625
+small_platform_3: 1350,570
+small_platform_4: 1145,505
+small_platform_5: 350,700
 
 player: ../cfg/player.def
 

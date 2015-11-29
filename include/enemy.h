@@ -12,6 +12,11 @@
 #include "entity.h"
 
 
+#define ARGO_DISTANCE 300
+#define ARGO_HEIGHT 75
+#define ATTACK_DISTANCE 22
+
+
 /**< enemy states */
 enum
 {

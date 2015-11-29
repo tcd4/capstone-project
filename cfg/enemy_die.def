@@ -2,5 +2,5 @@ sprite: ../cfg/enemy_sprite.def
 name: enemy_die
 start: 24
 end: 32
-frame_rate: 5
+frame_rate: 10
 type: 1

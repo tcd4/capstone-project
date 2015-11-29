@@ -91,12 +91,40 @@ Level* load_level( char *file )
   Vec2_Add( pos, offset, pos );
   load_level_objects( "platform9", pos, offset, size, draw_platform );
   
+  /* load small platforms */
+  Str_As_Vec2( Find_In_Dict( config, "small_platform_size" ), size );
+  Str_As_Vec2( Find_In_Dict( config, "small_platform_offset" ), offset );
+  
+  Str_As_Vec2( Find_In_Dict( config, "small_platform_0" ), pos );
+  Vec2_Add( pos, offset, pos );
+  load_level_objects( "small_platform_0", pos, offset, size, draw_small_platform );
+  
+  Str_As_Vec2( Find_In_Dict( config, "small_platform_1" ), pos );
+  Vec2_Add( pos, offset, pos );
+  load_level_objects( "small_platform_1", pos, offset, size, draw_small_platform );
+  
+  Str_As_Vec2( Find_In_Dict( config, "small_platform_2" ), pos );
+  Vec2_Add( pos, offset, pos );
+  load_level_objects( "small_platform_2", pos, offset, size, draw_small_platform );
+  
+  Str_As_Vec2( Find_In_Dict( config, "small_platform_3" ), pos );
+  Vec2_Add( pos, offset, pos );
+  load_level_objects( "small_platform_3", pos, offset, size, draw_small_platform );
+  
+  Str_As_Vec2( Find_In_Dict( config, "small_platform_4" ), pos );
+  Vec2_Add( pos, offset, pos );
+  load_level_objects( "small_platform_4", pos, offset, size, draw_small_platform );
+  
+  Str_As_Vec2( Find_In_Dict( config, "small_platform_5" ), pos );
+  Vec2_Add( pos, offset, pos );
+  load_level_objects( "small_platform_5", pos, offset, size, draw_small_platform );
+  
   /* load player */
   _player = create_player( Find_In_Dict( config, "player" ) );
   
   /* load enemies */
   Str_As_Vec2( Find_In_Dict( config, "enemy1_spawn" ), pos );
-  create_enemy( Find_In_Dict( config, "enemy" ), pos );
+  /*create_enemy( Find_In_Dict( config, "enemy" ), pos );*/
   
   return level;
 }

@@ -90,6 +90,7 @@ Entity* create_player( char *file )
 
   Str_As_UInt( Find_In_Dict( config, "think_rate" ), &new->think_rate );
 
+  new->think_state = STATE_ALIVE;
   new->Think = player_think;
   new->Die = player_die;
   new->Free = player_free;
@@ -151,7 +152,7 @@ void create_attack_box( Entity *owner, Dict *config )
 
 void player_think( Entity *self )
 {
-  if( ( self->ent_type != ENT_PLAYER ) || ( self->think_state & STATE_DEAD ) )
+  if( ( self->ent_type != ENT_PLAYER ) || ( self->think_state == STATE_DEAD ) )
     return;    
 }
 
@@ -172,8 +173,12 @@ void attack_box_think( Entity *self )
 
 void update_attack_box( Entity *owner, Entity *self )
 {
-  Vec2_Copy( owner->body->position, self->body->position );
-  Vec2_Add( self->body->position, _attack_box_offset, self->body->position );
+  if( owner->scale[ XA ] < 0 )
+    self->body->position[ XA ] = owner->body->position[ XA ] + owner->body->size[ XA ] + _attack_box_offset[ XA ];
+  else
+    self->body->position[ XA ] = owner->body->position[ XA ] - _attack_box_offset[ XA ] - self->body->size[ XA ];
+  
+  self->body->position[ YA ] = owner->body->position[ YA ] + _attack_box_offset[ YA ];
 }
 
 
@@ -209,14 +214,22 @@ void player_touch( dataptr d1, dataptr d2, double *moved )
       tmp[ XA ] = self->body->position[ XA ] - moved[ XA ];
       
       /* collide left */
-      if( tmp[ XA ] <= other->body->position[ XA ] )
+      if( tmp[ XA ] + self->body->size[ XA ] < other->body->position[ XA ] )
       {
-	self->body->position[ XA ] = other->body->position[ XA ] - self->body->size[ XA ];
+	self->body->position[ XA ] = other->body->position[ XA ] - self->body->size[ XA ] - 5;
 	return;
+	/*
+	self->body->position[ XA ] = other->body->position[ XA ] - self->body->size[ XA ];
+	if( self->body->position[ XA ] <= 0 )
+	{
+	  self->body->position[ XA ] = 5;
+	}
+	else
+	  return;*/
       }
       
       /* collide right */
-      if( tmp[ XA ] >= other->body->position[ XA ] + other->body->size[ XA ] )
+      if( tmp[ XA ] > other->body->size[ XA ] + other->body->position[ XA ] )
       {
 	self->body->position[ XA ] = other->body->position[ XA ] + other->body->size[ XA ] + 5;
 	return;
@@ -225,18 +238,22 @@ void player_touch( dataptr d1, dataptr d2, double *moved )
       /* collision on top */   
       self->body->position[ YA ] = tmp[ YA ];
       self->body->velocity[ YA ] = 0;
-      
-      /* ground the player */
-      _player_flags |= PLAYER_GROUNDED;
 
       /* set animation state */      
-      if( self->body->velocity[ XA ] )
+      if( ( self->draw_state == PLAYER_ATTACK ) && !( _player_flags & PLAYER_GROUNDED ) )
+      {
+	self->body->velocity[ XA ] = 0;
+      }
+      else if( ( self->body->velocity[ XA ] ) && !( _player_flags & PLAYER_GROUNDED ) )
       {
 	reset_actor( self->actors[ PLAYER_WALK ] );
 	self->draw_state = PLAYER_WALK;
       }
-      else if( self->draw_state == PLAYER_JUMP )
+      else
 	self->draw_state = PLAYER_IDLE;
+      
+      /* ground the player */
+      _player_flags |= PLAYER_GROUNDED;
     }
   }
   else if( other->ent_type == ENT_ENEMY )
@@ -256,7 +273,7 @@ void player_die( Entity *self )
     player_attack_done( self );
   
   self->draw_state = PLAYER_DIE;
-  self->think_state |= STATE_DEAD;
+  self->think_state = STATE_DEAD;
   turn_off_player_cmds();
   remove_ent_from_space( self );
 }
