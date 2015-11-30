@@ -123,8 +123,26 @@ Level* load_level( char *file )
   _player = create_player( Find_In_Dict( config, "player" ) );
   
   /* load enemies */
+  Str_As_Vec2( Find_In_Dict( config, "enemy0_spawn" ), pos );
+  create_enemy( Find_In_Dict( config, "enemy" ), pos );
+  
   Str_As_Vec2( Find_In_Dict( config, "enemy1_spawn" ), pos );
-  /*create_enemy( Find_In_Dict( config, "enemy" ), pos );*/
+  create_enemy( Find_In_Dict( config, "enemy" ), pos );
+  
+  Str_As_Vec2( Find_In_Dict( config, "enemy2_spawn" ), pos );
+  create_enemy( Find_In_Dict( config, "enemy" ), pos );
+  
+  Str_As_Vec2( Find_In_Dict( config, "enemy3_spawn" ), pos );
+  create_enemy( Find_In_Dict( config, "enemy" ), pos );
+  
+  Str_As_Vec2( Find_In_Dict( config, "enemy4_spawn" ), pos );
+  create_enemy( Find_In_Dict( config, "enemy" ), pos );
+  
+  Str_As_Vec2( Find_In_Dict( config, "enemy5_spawn" ), pos );
+  create_enemy( Find_In_Dict( config, "enemy" ), pos );
+  
+  Str_As_Vec2( Find_In_Dict( config, "enemy6_spawn" ), pos );
+  create_enemy( Find_In_Dict( config, "enemy" ), pos );
   
   return level;
 }

@@ -87,7 +87,6 @@ Sprite* load_sprite( char *image_file, uint32 cols, uint32 rows, uint32 frames, 
   int i;
   Sprite *tmp;
   
-  Log( TRACE, "Loading image %s", image_file );
   if( !image_file )
   {
     if( config )

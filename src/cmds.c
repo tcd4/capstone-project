@@ -73,8 +73,6 @@ uint8 add_cmd( uint8 on, char *name, uint32 type, int id, uint32 hold, EventNoti
   new->event_param = param;
   new->inuse = on;
   
-  Log( TRACE, "%s command added, using key %i", new->name, new->id );
-  
   return TRUE;
 }
 
