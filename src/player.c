@@ -9,6 +9,7 @@ static uint8	_player_flags = 0;
 static vec2_t	_spawn;
 static vec2_t	_jump_speed;
 static vec2_t	_move_speed;
+static vec2_t	_accel;
 static vec2_t	_attack_box_offset;
 
 
@@ -76,6 +77,7 @@ Entity* create_player( char *file )
   Str_As_Vec2( Find_In_Dict( config, "offset" ), offset );
   Str_As_Vec2( Find_In_Dict( config, "jump_speed" ), _jump_speed );
   Str_As_Vec2( Find_In_Dict( config, "move_speed" ), _move_speed );
+  Str_As_Vec2( Find_In_Dict( config, "accel" ), _accel );
   
   Vec2_Copy( _spawn, pos );
   Vec2_Add( pos, offset, pos );
@@ -154,6 +156,12 @@ void player_think( Entity *self )
 {
   if( ( self->ent_type != ENT_PLAYER ) || ( self->think_state == STATE_DEAD ) )
     return;    
+  
+  if( self->body->velocity[ XA ] > 0 && self->body->velocity[ XA ] > _move_speed[ XA ] )
+    self->body->velocity[ XA ] = _move_speed[ XA ];
+  else if( self->body->velocity[ XA ] < 0 && self->body->velocity[ XA ] < -_move_speed[ XA ] )
+    self->body->velocity[ XA ] = -_move_speed[ XA ];
+  
 }
 
 
@@ -253,6 +261,7 @@ void player_touch( dataptr d1, dataptr d2, double *moved )
 	self->draw_state = PLAYER_IDLE;
       
       /* ground the player */
+      self->body->velocity[ YA ] = 0;
       _player_flags |= PLAYER_GROUNDED;
     }
   }
@@ -313,13 +322,17 @@ void player_move_right( dataptr d )
   
   self = ( Entity* )( d );
 
-  if( self->draw_state == PLAYER_JUMP || self->draw_state == PLAYER_ATTACK )
+  if( self->draw_state == PLAYER_ATTACK )
     return;
   
-  self->body->velocity[ XA ] = _move_speed[ XA ];
+  if( self->body->velocity[ XA ] < 0 )
+    self->body->velocity[ XA ] = 0;
+  
+  self->body->acceleration[ XA ] = _accel[ XA ];
   Vec2_Set( self->scale, -1, 1 );
   
-  self->draw_state = PLAYER_WALK;
+  if( self->draw_state != PLAYER_JUMP )
+    self->draw_state = PLAYER_WALK;
 }
 
 
@@ -329,13 +342,17 @@ void player_move_left( dataptr d )
   
   self = ( Entity* )( d );
 
-  if( self->draw_state == PLAYER_JUMP || self->draw_state == PLAYER_ATTACK )
+  if( self->draw_state == PLAYER_ATTACK )
     return;
   
-  self->body->velocity[ XA ] = -_move_speed[ XA ];
+  if( self->body->velocity[ XA ] > 0 )
+    self->body->velocity[ XA ] = 0;
+  
+  self->body->acceleration[ XA ] = -_accel[ XA ];
   Vec2_Set( self->scale, 1, 1 );
   
-  self->draw_state = PLAYER_WALK;
+  if( self->draw_state != PLAYER_JUMP )
+    self->draw_state = PLAYER_WALK;
 }
 
 
@@ -348,6 +365,7 @@ void player_stop( dataptr d )
   reset_actor( self->actors[ PLAYER_WALK ] );
   
   self->body->velocity[ XA ] = 0;
+  self->body->acceleration[ XA ] = 0;
   
   if( self->draw_state == PLAYER_WALK )
     self->draw_state = PLAYER_IDLE;

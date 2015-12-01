@@ -10,7 +10,7 @@ ground_position: 0,1000
 platform_offset: 5,6
 platform_size: 270,31
 
-platform_0_position: 386,786
+platform_0_position: 336,766
 platform_1_position: 680,600
 platform_2_position: 700,888
 platform_3_position: 800,450

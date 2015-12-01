@@ -184,7 +184,7 @@ void Exit_Systems()
   close_entity_system();
   free_level( &_level );
   close_cmd_system();
-  Close_2DGraphics();
+ /* Close_2DGraphics();*/
   /* close audio */
   Exit_Logging();
 }

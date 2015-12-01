@@ -11,11 +11,12 @@ spawn: 100,923
 scale: -1,1
 rotation: 0,0
 
-think_rate: 50
+think_rate: 1
 
-gravity: 0,.1
-jump_speed: 0,5.5
+gravity: 0,.25
+jump_speed: 0,9
 move_speed: 5,0
+accel: 1,0
 
 attack_box_size: 50,50
 attack_box_offset: 0,10
